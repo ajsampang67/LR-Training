@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.liferay.training.amf.monitor.model.Event">
+		<field name="uuid" type="String" />
+		<field name="EventId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="eventDate" type="String" />
+		<field name="screenName" type="String" />
+		<field name="userId" type="long" />
+		<field name="ipAddress" type="String" />
+		<field name="eventType" type="String" />
+	</model>
+</model-hints>
