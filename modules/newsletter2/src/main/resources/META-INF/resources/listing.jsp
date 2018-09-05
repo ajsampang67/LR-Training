@@ -1,14 +1,6 @@
 <%@ include file="/init.jsp" %>
 
-<%--
-Reason for scriptlets:
-	- Keep getting "No method ___ found" or "No enum constant"
-(ex. Month.January) if being called inside JSTL.
-	- When using JSTL for-loop over scriptlet,
-	can't access value through pageContext
-	(or couldn't find a way to access at all)
-	**TODO See Onenote for this fix
---%>
+<c:set value="${issuesByYearAndMonth}" var="issuesByYearAndMonth" />
 
 <liferay-ui:tabs
 	names="${fn:join(years, ',')}"
@@ -16,40 +8,80 @@ Reason for scriptlets:
 	type="tabs nav-tabs-default"
 >
 	<c:forEach items="${years}" var="year">
-		<c:set value="${issuesByYear.get(year)}" var="issuesThisYear" />
-
 		<liferay-ui:section>
 			<c:set value="${monthsByYear.get(year)}" var="months" />
 
-			<c:forEach items="${months}" var="month">
-				<div style="text-align:center;">
-					<liferay-ui:header title="${month}" />
+			<c:forEach items="${trueMonths}" var="month">
+				<c:if test="${months.contains(month)}">
+					<div style="text-align:center;">
+						<liferay-ui:header title="${month}" />
+					</div>
 
-					<c:forEach items="issuesThisYear" var="issue">
+					<%-- Had to use scriptlets, can't use Utils in JSTL --%>
 
-						<%--
-						1) Figure out how to get custom JSTL to work
-							- currently get missing capability "osgi.extender"
-								in gogo, module won't start
-						2) Use scriptlets
-							- https://stackoverflow.com/questions/19528605/how-to-access-to-iteration-variable-in-cforeach-with-a-scriptlet-expression
-						<c:set
-							value="${myfn:getArticleFieldValue(issue,
-							'issueDate')}"
-							var="issueDate"
-						/>
+					<%
+					long groupId = themeDisplay.getScopeGroupId();
+					String year = (String)pageContext.getAttribute("year");
+					String month = (String)pageContext.getAttribute("month");
+					HashMap<String, List<JournalArticle>> issuesByYearAndMonth =
+							(HashMap<String, List<JournalArticle>>)
+									pageContext.getAttribute("issuesByYearAndMonth");
+					String issuesKey = year+month;
+					String languageId = LanguageUtil.getLanguageId(Locale.US);
 
-						<c:set
-							value="${myfn:getMonthDisplayName(issueDate)}"
-							var="issueMonth"
-						/>
+					// Layout page of Issue view
 
-						<c:if test="${issueMonth.equals(month)}">
-							test
-						</c:if>
-						--%>
-					</c:forEach>
-				</div>
+					Layout issueLayout =
+							LayoutLocalServiceUtil.getFriendlyURLLayout(groupId, false, "/newsletter");
+
+					long issueLayoutPlid = issueLayout.getPlid();
+					LayoutTypePortlet issueLayoutTypePortlet =
+							(LayoutTypePortlet)issueLayout.getLayoutType();
+
+					// Getting Asset Publisher portlet from layout
+
+					List<Portlet> allPortlets =
+							issueLayoutTypePortlet.getAllPortlets();
+					String assetPublisherPortletName = StringPool.BLANK;
+
+					for (Portlet portlet : allPortlets) {
+						if (portlet.getRootPortletId().equals(Newsletter2PortletKeys.ASSET_PUBLISHER_ID)) {
+							assetPublisherPortletName =
+									portlet.getPortletId();
+						}
+					}
+
+					for (JournalArticle issue : issuesByYearAndMonth.get(issuesKey)) {
+						%>
+
+                        <liferay-portlet:renderURL
+                            plid="<%= issueLayoutPlid %>"
+                            portletName="<%= assetPublisherPortletName %>"
+                            var="issueURL"
+                        >
+							<liferay-portlet:param
+								name="articleId"
+								value="<%= issue.getArticleId() %>"
+							/>
+						</liferay-portlet:renderURL>
+
+						<a href="<%= issueURL %>">
+						<%= JournalArticleLocalServiceUtil.getArticleContent(
+								issue,
+								Newsletter2PortletKeys.ISSUE_LISTING_TEMPLATE_KEY,
+								ActionKeys.VIEW,
+								languageId,
+								new PortletRequestModel(
+									renderRequest, renderResponse), themeDisplay) %>
+						</a>
+
+						<hr style="border-top:dashed 1px;color:gray;" />
+
+					<%
+					}
+					%>
+
+				</c:if>
 			</c:forEach>
 		</liferay-ui:section>
 	</c:forEach>

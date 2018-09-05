@@ -1,51 +1,60 @@
-<%@ page import="com.liferay.portal.kernel.util.ParamUtil" %>
+<%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 <%@ include file="/init.jsp" %>
 
-<!-- TODO: Switch to language keys/SessionErrors for errors -->
+<!-- TODO: Switch to SessionErrors for errors -->
 <!-- Checks if user is logged in -->
 
 <c:choose>
     <c:when test="${!themeDisplay.isSignedIn()}">
         <div>
-            <div>
-                <!-- Listing errors -->
-
-                <!-- Checking if String coming from VC is null -->
-                <c:set value="${param.actionResult}" var="result" />
-
-                <c:if test="${result.length() != null}">
-                <c:set value="${fn:length(result)}" var="resultlen" />
-                <c:set value="${fn:substring(result, 1, (resultlen-1))}" var="presult" />
-                <c:set value="${fn:split(presult, ',')}" var="errors" />
-                <c:set value="${fn:length(errors)}" var="len" />
-
-                <ul style="color:red">
-                <c:forEach items="${errors}" var="error">
-                <li> ${error}</li>
-                </c:forEach>
-                </ul>
-                </c:if>
-            </div>
-
-            <form action="<portlet:actionURL name="register" />" method="post">
+            <form action="<portlet:actionURL name="/processForm" />"
+                  method="post">
                 <aui:fieldset-group markupView="lexicon">
-                    <h1> Basic Info </h1>
-                    <aui:input label="First Name" name="first_name" type="text"
+                    <h1>
+                        <liferay-ui:message key="basic-info"/>
+                    </h1>
+                    <liferay-ui:error key="name-max-length-50-characters-per-line"
+                                      message="name-max-length-50-characters-per-line"/>
+                    <liferay-ui:error key="name-must-be-alphanumeric"
+                                      message="name-must-be-alphanumeric"/>
+                    <aui:input label="first-name" name="first_name"
+                               type="text"
                                required="true" />
-                    <aui:input label="Last Name" name="last_name" type="text"
+                    <liferay-ui:error key="please-add-a-first-name"
+                                      message="please-add-a-first-name"/>
+                    <aui:input label="last-name" name="last_name"
+                               type="text"
                                required="true" />
-                    <aui:input label="Email" name="email_address" type="email"
+                    <liferay-ui:error key="please-add-a-last-name"
+                                      message="please-add-a-last-name"/>
+                    <aui:input label="email" name="email_address"
+                               type="email"
                                required="true"/>
-                    <aui:input label="Username" name="username" type="text"
+                    <liferay-ui:error key="please-enter-an-email" message="please-enter-an-email"/>
+                    <liferay-ui:error key="email-max-length-255-characters"
+                                      message="email-max-length-255-characters"/>
+                   <liferay-ui:error key="please-enter-a-valid-email-address"
+                                     message="please-enter-a-valid-email-address"/>
+                    <aui:input label="username" name="username"
+                               type="text"
                                required="true"/>
+                    <liferay-ui:error key="please-enter-a-username"
+                                      message="please-enter-a-username"/>
+                    <liferay-ui:error key="username-must-be-between-4-and-16-characters"
+                                      message="username-must-be-between-4-and-16-characters"/>
+                    <liferay-ui:error key="username-must-be-alphanumeric"
+                                      message="username-must-be-alphanumeric"/>
 
-                    <aui:select class="select" label="Gender" name="male"
+                    <aui:select class="select" label="gender"
+                                name="male"
                                 required="true">
                         <aui:option value="1">Male</aui:option>
                         <aui:option value="0">Female</aui:option>
                     </aui:select>
 
-                    <label>Birthday</label>
+                    <label>
+                        <liferay-ui:message key="birthday"/>
+                    </label>
                     <% Calendar today = Calendar.getInstance(); %>
                     <liferay-ui:input-date
                         dayParam="b_day"
@@ -57,31 +66,69 @@
                         yearValue="<%= today.get(Calendar.YEAR) - 13 %>"
                         required="true"
                     />
+                    <liferay-ui:error key="birthday-is-not-a-valid-date"
+                                      message="birthday-is-not-a-valid-date"/>
+                    <liferay-ui:error key="must-be-13-years-of-age-or-older"
+                                      message="must-be-13-years-of-age-or-older"/>
 
-                    <aui:input label="Password" name="password1" type="password"
+                    <aui:input label="password" name="password1" type="password"
                                 required="true"/>
-                    <aui:input label="Repeat Password" name="password2" type="password"
+                    <aui:input label="repeat-password" name="password2"
+                               type="password"
                                 required="true"/>
+                    <liferay-ui:error key="please-enter-a-password-and-repeat"
+                                      message="please-enter-a-password-and-repeat"/>
+                    <liferay-ui:error key="password-must-be-at-least-6-characters-long"
+                                      message="password-must-be-at-least-6-characters-long"/>
+                    <liferay-ui:error key="password-must-have-at-least-one-uppercase-letter"
+                                      message="password-must-have-at-least-one-uppercase-letter"/>
+                    <liferay-ui:error key="password-must-be-at-least-one-number"
+                                      message="password-must-be-at-least-one-number"/>
+                    <liferay-ui:error key="password-must-have-at-least-one-special-character"
+                                      message="password-must-have-at-least-one-special-character"/>
+                    <liferay-ui:error key="passwords-do-not-match"
+                                      message="passwords-do-not-match"/>
 
                     <h2>Phone</h2>
-                    <aui:input label="Home Phone" name="home_phone"
+                    <aui:input label="home-phone" name="home_phone"
                                type="number" />
-                    <aui:input label="Mobile Phone" name="mobile_phone"
+                    <aui:input label="mobile-phone" name="mobile_phone"
                                type="number" />
+                    <liferay-ui:error key="please-enter-a-valid-phone-number"
+                                      message="please-enter-a-valid-phone-number"/>
+                    <liferay-ui:error key="please-enter-a-10-digit-phone-number"
+                                      message="please-enter-a-10-digit-phone-number"/>
+
 
                     <h2>Billing Address</h2>
-                    <aui:input label="Address Line 1" name="address" type="text"
+                    <aui:input label="address-line-1" name="address" type="text"
                                 required="true"/>
-                    <aui:input label="Address Line 2" name="address2" type="text" />
-                    <aui:input label="City" name="city" type="text"
+                    <aui:input label="address-line-2" name="address2"
+                               type="text" />
+                    <aui:input label="city" name="city" type="text"
                                required="true"/>
+                    <liferay-ui:error key="please-enter-an-address-starting-on-line-1"
+                                      message="please-enter-an-address-starting-on-line-1"/>
+                    <liferay-ui:error key="address-max-length-255-characters-per-line"
+                                      message="address-max-length-255-characters-per-line"/>
+                    <liferay-ui:error key="invalid-characters-in-address-line-1"
+                                      message="invalid-characters-in-address-line-1"/>
+                    <liferay-ui:error key="invalid-characters-in-address-line-2"
+                                      message="invalid-characters-in-address-line-2"/>
+                    <liferay-ui:error key="please-enter-a-city"
+                                      message="please-enter-a-city"/>
+                    <liferay-ui:error key="invalid-characters-in-city"
+                                      message="invalid-characters-in-city"/>
+                    <liferay-ui:error key="city-max-length-255-characters"
+                                      message="city-max-length-255-characters"/>
+
 
                     <!-- Region special case. Uses getRegions() to list all regions in US
                     (country code 19), then lists them in a select tag. Returns RegionId to
                     Controller -->
 
                     <% List<Region> states = RegionServiceUtil.getRegions(19); %>
-                    <aui:select class="select" label="State" name="state"
+                    <aui:select class="select" label="state" name="state"
                                 required="true">
                     <% for(Region state : states){ %>
                         <aui:option value="<%= state.getRegionId() %>">
@@ -89,37 +136,66 @@
                         </aui:option>
                     <% } %>
                     </aui:select>
+                    <liferay-ui:error key="please-choose-a-state"
+                                      message="please-choose-a-state"/>
+                    <liferay-ui:error key="please-choose-a-state-with-a-valid-region-id"
+                                      message="please-choose-a-state-with-a-valid-region-id"/>
 
-                    <aui:input label="Zip Code" name="zip" type="text"
+                    <aui:input label="zip-code" name="zip" type="text"
                                 required="true"/>
+                    <liferay-ui:error key="please-enter-a-zip-code"
+                                      message="please-enter-a-zip-code"/>
+                    <liferay-ui:error key="invalid-characters-in-zip-code"
+                                      message="invalid-characters-in-zip-code"/>
+                    <liferay-ui:error key="please-enter-a-5-digit-zip-code"
+                                      message="please-enter-a-5-digit-zip-code"/>
+
 
                     <aui:select
                         class="select"
-                        label="Security Question"
+                        label="security-question"
                         name="security_question"
                         required="true"
                     >
-                        <aui:option value="What is your mother's maiden name?">
-                            What is your mother's maiden name?</aui:option>
-                        <aui:option value="What is the make of your first car?">
-                            What is the make of your first car?</aui:option>
-                        <aui:option value="What is your high school mascot?">
-                            What is your high school mascot?</aui:option>
-                        <aui:option value="Who is your favorite actor?">
-                            Who is your favorite actor?</aui:option>
+                        <aui:option value="what-is-your-mothers-maiden-name">
+                            <liferay-ui:message key="what-is-your-mothers-maiden-name"/>
+                        </aui:option>
+                        <aui:option value="what-is-the-make-of-your-first-car">
+                            <liferay-ui:message key="what-is-the-make-of-your-first-car"/>
+                        </aui:option>
+                        <aui:option value="what-is-your-highschool-mascot">
+                            <liferay-ui:message key="what-is-your-highschool-mascot"/>
+                        </aui:option>
+                        <aui:option value="who-is-your-favorite-actor">
+                            <liferay-ui:message key="who-is-your-favorite-actor"/>
+                        </aui:option>
                     </aui:select>
 
-                    <aui:input label="Security Answer" name="security_answer"
+                    <aui:input label="security-answer" name="security_answer"
                                type="text" required="true"/>
+                    <liferay-ui:error key="please-select-select-a-security-question-and-answer"
+                                      message="please-select-select-a-security-question-and-answer"/>
+                    <liferay-ui:error key="please-select-a-security-question-from-the-list"
+                                      message="please-select-a-security-question-from-the-list"/>
+                    <liferay-ui:error key="please-answer-security-question"
+                                      message="please-answer-security-question"/>
+                    <liferay-ui:error key="answer-max-length-255-characters"
+                                      message="answer-max-length-255-characters"/>
 
-                    <label for="accepted_tou">I have read, understand, and agree with
-                        the <a href="/tou" target="_blank">Terms of Use</a>
-                        governing my
-                        access to and
-                        use of the Acme Movie Fanatics web site.</label>
+
+                    <label for="accepted_tou">
+                        <liferay-ui:message key="i-have-read-understand-and-agree-with-the"/>
+                        <a href="/tou" target="_blank">
+                            <liferay-ui:message key="terms-of-use"/>
+                        </a>
+                        <liferay-ui:message key="governing-my-access-to-and-use-of-the-acme-movie-fanatics-web-site"/>
+                    </label>
+                    <liferay-ui:error key="please-accept-terms-of-use"
+                                      message="please-accept-terms-of-use"/>
+
                     <aui:input
                         class="checkbox"
-                        label="Accept"
+                        label="accept"
                         name="accepted_tou"
                         type="checkbox"
                         required="true"
@@ -127,13 +203,18 @@
                 </aui:fieldset-group>
 
                 <aui:button-row>
-                    <aui:button label="Submit" type="submit" />
+                    <aui:button label="submit" type="submit" />
                     <aui:button onclick="javascript:window.history.back(-1)" type="cancel" />
                 </aui:button-row>
             </form>
         </div>
     </c:when>
     <c:otherwise>
-        <p>You're already logged in, get <aui:a href="/web/guest">exploring!</aui:a></p>
+        <p>
+            <liferay-ui:message key="youre-already-logged-in-get"/>
+            <aui:a href="<%=PortalUtil.getHomeURL(request) %>">
+                <liferay-ui:message key="exploring"/>
+            </aui:a>
+        </p>
     </c:otherwise>
 </c:choose>

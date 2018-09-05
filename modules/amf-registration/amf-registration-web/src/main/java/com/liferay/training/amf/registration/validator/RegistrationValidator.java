@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-// Maybe should've used SessionMessages/SessionErrors here
 public class RegistrationValidator {
 
 	public static boolean acceptedTOU(
@@ -20,7 +19,7 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (!tou) {
-			errors.add("Terms of Use not accepted");
+			errors.add("please-accept-terms-of-use");
 			result = false;
 		}
 
@@ -34,54 +33,54 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (Validator.isNull(address1)) {
-			errors.add("Please enter an address (starting on line 1)");
+			errors.add("please-enter-an-address-starting-on-line-1");
 			result = false;
 		} else if(address1.length() > 255 || address2.length() > 255) {
-			errors.add("Address max length 255 characters per line");
+			errors.add("address-max-length-255-characters-per-line");
 			result = false;
 		} else if(!Validator.isAlphanumericName(address1)) {
-			errors.add("Invalid characters in address line 1");
+			errors.add("invalid-characters-in-address-line-1");
 			result = false;
 		}
 
 		if (Validator.isNotNull(address2)) {
 			if (!Validator.isAlphanumericName(address2)) {
-				errors.add("Invalid characters in address line 2");
+				errors.add("invalid-characters-in-address-line-2");
 				result = false;
 			}
 		}
 
 		if (Validator.isNull(city)) {
-			errors.add("Please enter a city");
+			errors.add("please-enter-a-city");
 			result = false;
 		} else if(!Validator.isAlphanumericName(city)) {
-			errors.add("Invalid characters in city");
+			errors.add("invalid-characters-in-city");
 			result = false;
 		} else if(city.length() > 255) {
-			errors.add("City max length 255 characters");
+			errors.add("city-max-length-255-characters");
 			result = false;
 		}
 
 		if (Validator.isNull(state)) {
-			errors.add("Please choose a state");
+			errors.add("please-choose-a-state");
 			result = false;
 		} else {
 			try {
 				RegionServiceUtil.getRegion(state);
 			} catch (PortalException e) {
-				errors.add("Please choose a state with a valid Region Id");
+				errors.add("please-choose-a-state-with-a-valid-region-id");
 				result = false;
 			}
 		}
 
 		if (Validator.isNull(zip)) {
-			errors.add("Please enter a zip code");
+			errors.add("please-enter-a-zip-code");
 			result = false;
 		} else if(!Validator.isNumber(zip)) {
-			errors.add("Invalid characters in zip code");
+			errors.add("invalid-characters-in-zip-code");
 			result = false;
 		} else if(zip.length() != 5) {
-			errors.add("Please enter a 5 digit zip code");
+			errors.add("please-enter-a-5-digit-zip-code");
 			result = false;
 		}
 
@@ -95,7 +94,7 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (!Validator.isDate(b_month, b_day, b_year)) {
-			errors.add("Birthday invalid");
+			errors.add("birthday-is-not-a-valid-date");
 			result = false;
 		}
 
@@ -105,7 +104,7 @@ public class RegistrationValidator {
 		int age = CalendarUtil.getAge(bday, Calendar.getInstance());
 
 		if (age < 13) {
-			errors.add("Must be 13 years of age or older to register");
+			errors.add("must-be-13-years-of-age-or-older-to-register");
 			result = false;
 		}
 
@@ -118,13 +117,13 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (Validator.isNull(email)) {
-			errors.add("Please enter an email");
+			errors.add("please-enter-an-email");
 			result = false;
 		} else if(email.length() > 255) {
-			errors.add("Max length email 255 characters");
+			errors.add("email-max-length-255-characters");
 			result = false;
 		} else if(!Validator.isEmailAddress(email)) {
-			errors.add("Please enter a valid email address");
+			errors.add("please-enter-a-valid-email-address");
 			result = false;
 		}
 
@@ -137,13 +136,13 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (Validator.isNull(fname)) {
-			errors.add("Please add a First Name");
+			errors.add("please-add-a-first-name");
 			result = false;
 		} else if(fname.length() > 50) {
-			errors.add("Max length first name 50 characters");
+			errors.add("name-max-length-50-characters-per-line");
 			result = false;
 		} else if(!Validator.isAlphanumericName(fname)) {
-			errors.add("First name must be alphanumeric");
+			errors.add("name-must-be-alphanumeric");
 			result = false;
 		}
 
@@ -156,13 +155,13 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (Validator.isNull(lname)) {
-			errors.add("Please add a Last Name");
+			errors.add("please-add-a-last-name");
 			result = false;
 		} else if (lname.length() > 50) {
-			errors.add("Max length last name 50 characters");
+			errors.add("name-max-length-50-characters-per-line");
 			result = false;
 		} else if (!Validator.isAlphanumericName(lname)) {
-			errors.add("Last name must be alphanumeric");
+			errors.add("name-must-be-alphanumeric");
 			result = false;
 		}
 
@@ -172,6 +171,10 @@ public class RegistrationValidator {
 	public static boolean isValidPassword(
 		final String p1, final String p2, final List<String> errors) {
 
+	    if(Validator.isNull(p1) || Validator.isNull(p2)){
+			errors.add("please-enter-a-password-and-repeat");
+		}
+
 		boolean result = true;
 
 		boolean minLength = p1.length()>=6;
@@ -180,27 +183,27 @@ public class RegistrationValidator {
 		boolean minOneSpecial = !p1.matches("[A-Za-z0-9]*");
 
 		if (!minLength) {
-			errors.add("Password must be at least 6 characters long");
+			errors.add("password-must-be-at-least-6-characters-long");
 			result = false;
 		}
 
 		if (!minOneUp) {
-			errors.add("Password must have at least one uppercase letter");
+			errors.add("password-must-have-at-least-one-uppercase-letter");
 			result = false;
 		}
 
 		if (!minOneNumber) {
-			errors.add("Password must have at least one number");
+			errors.add("password-must-have-at-least-one-number");
 			result = false;
 		}
 
 		if (!minOneSpecial) {
-			errors.add("Password must have at least one special character");
+			errors.add("password-must-have-at-least-one-special-character");
 			result = false;
 		}
 
 		if (!(p1.equals(p2))) {
-			errors.add("Passwords do not match");
+			errors.add("passwords-do-not-match");
 			result = false;
 		}
 
@@ -213,11 +216,12 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (!Validator.isPhoneNumber(phoneNumber)) {
-			errors.add("Please enter a valid phone number");
+			errors.add("please-enter-a-valid-phone-number");
+			result = false;
 		}
 
 		if (phoneNumber.length() != 10) {
-			errors.add("Please enter a 10 digit phone number.");
+			errors.add("please-enter-a-10-digit-phone-number");
 			result = false;
 		}
 
@@ -230,24 +234,24 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		List<String> validQs = Arrays.asList(
-						"What is your mother's maiden name?",
-						"What is the make of your first car?",
-						"What is your high school mascot?",
-						"Who is your favorite actor?");
+						"what-is-your-mothers-maiden-name?",
+						"what-is-the-make-of-your-first-car?",
+						"what-is-your-high-school-mascot?",
+						"who-is-your-favorite-actor?");
 
 		if (Validator.isNull(question)) {
-			errors.add("Please select a security question and answer");
+			errors.add("please-select-a-security-question-and-answer");
 			result = false;
 		} else if(!validQs.contains(question)) {
-			errors.add("Please select a security question from the list");
+			errors.add("please-select-a-security-question-from-the-list");
 			result = false;
 		}
 
 		if (Validator.isNull(answer)) {
-			errors.add("Please answer security question");
+			errors.add("please-answer-security-question");
 			result = false;
 		} else if(answer.length() > 255) {
-			errors.add("Answer max length 255 characters");
+			errors.add("answer-max-length-255-characters");
 			result = false;
 		}
 
@@ -260,17 +264,34 @@ public class RegistrationValidator {
 		boolean result = true;
 
 		if (Validator.isNull(uname)) {
-			errors.add("Please enter a username");
+			errors.add("please-enter-a-username");
 			result = false;
 		} else if(uname.length() < 4 || uname.length() > 16) {
-			errors.add("Username must be between 4 and 16 characters");
+			errors.add("username-must-be-between-4-and-16-characters");
 			result = false;
 		} else if(!Validator.isAlphanumericName(uname)) {
-			errors.add("Username must be alphanumeric");
+			errors.add("username-must-be-alphanumeric");
 			result = false;
 		}
 
 		return result;
+	}
+
+	public static void isValidForm(List<String> errors, String firstName,
+		String lastName, String emailAddress, String userName, int b_month,
+        int b_day, int b_year, String password1, String password2, String street1,
+        String street2, String city, long regionId, String zip, String secQ,
+        String secA, boolean tou) {
+
+		isValidFName(firstName, errors);
+		isValidLName(lastName, errors);
+		isValidEmail(emailAddress, errors);
+		isValidUsername(userName, errors);
+		isValidBirthday(b_month, b_day, b_year, errors);
+		isValidPassword(password1, password2, errors);
+		isValidAddress(street1, street2, city, regionId, zip, errors);
+		isValidSecurityQ(secQ, secA, errors);
+		acceptedTOU(tou, errors);
 	}
 
 }

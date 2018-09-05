@@ -32,8 +32,6 @@ request.setAttribute("tab", tab);
 	List eventList = new ArrayList();
 
 	if (!permissionChecker.hasPermission(scopeGroupId, portletDisplay.getRootPortletId(), portletDisplay.getResourcePK(), "VIEW_ALL_EVENTS")) {
-		System.out.println("RESOURCE PK: "+portletDisplay.getResourcePK());
-
 		for (Object obj : preEventList) {
 			Event event = (Event)obj;
 
