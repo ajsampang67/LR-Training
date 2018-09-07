@@ -27,17 +27,21 @@ import com.liferay.portal.kernel.service.PhoneLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.training.amf.registration.service.base.AmfUserLocalServiceBaseImpl;
+import com.liferay.training.amf.registration.service.validator.RegistrationValidator;
 
 import java.util.List;
 import java.util.Locale;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+
+import static com.liferay.training.amf.registration.service.validator.RegistrationValidator.isValidPhone;
 
 /**
  * The implementation of the amf user local service.
@@ -71,75 +75,101 @@ public class AmfUserLocalServiceImpl extends AmfUserLocalServiceBaseImpl {
 		String homePhone, String mobilePhone, String street1, String street2,
 		String city, long regionId, long countryId, String zip, String secQ,
 		String secA, boolean tou) {
+		// Validating all form data
 
-		User newUser;
-		try {
-			Group guest = GroupLocalServiceUtil.getGroup(
-				companyId, GroupConstants.GUEST);
-			long[] organizationIds = {};
-			long[] groupIds = {guest.getGroupId()};
-			long[] roleIds = {};
-			long[] userGroupIds = {};
+		RegistrationValidator.isValidForm(
+				errors, firstName, lastName, emailAddress, userName, b_month,
+b_day, b_year, password1, password2, street1, street2, city, regionId, zip,
+secQ, secA, tou);
 
-			newUser = UserLocalServiceUtil.addUser(
-					creatorUserId, companyId, false, password1, password2,
-false, userName, emailAddress, 0, StringPool.BLANK, Locale.US, firstName,
-					StringPool.BLANK, lastName, 0, 0, male == 1, b_month, b_day,
-b_year, StringPool.BLANK, groupIds, organizationIds, roleIds, userGroupIds,
-					true, null);
+		// Phone validation
 
-			newUser.setPasswordReset(false);
-			newUser.setReminderQueryQuestion(secQ);
-			newUser.setReminderQueryAnswer(secA);
-			newUser.setAgreedToTermsOfUse(tou);
+		if (Validator.isNotNull(homePhone)) {
+			isValidPhone(homePhone, errors);
+		}
 
-			// Adding phones
+		if (Validator.isNotNull(mobilePhone)) {
+			isValidPhone(mobilePhone, errors);
+		}
 
-			ServiceContext serviceContext = ServiceContextFactory.getInstance(
-							request);
 
-			if (Validator.isNotNull(homePhone)) {
-				PhoneLocalServiceUtil.addPhone(
+		for (String error : errors) {
+			SessionErrors.add(request, error);
+		}
+
+		if(SessionErrors.isEmpty(request)) {
+			User newUser;
+			try {
+				Group guest = GroupLocalServiceUtil.getGroup(
+						companyId, GroupConstants.GUEST);
+				long[] organizationIds = {};
+				long[] groupIds = {guest.getGroupId()};
+				long[] roleIds = {};
+				long[] userGroupIds = {};
+
+				newUser = UserLocalServiceUtil.addUser(
+						creatorUserId, companyId, false, password1, password2,
+						false, userName, emailAddress, 0, StringPool.BLANK, Locale.US, firstName,
+						StringPool.BLANK, lastName, 0, 0, male == 1, b_month, b_day,
+						b_year, StringPool.BLANK, groupIds, organizationIds, roleIds, userGroupIds,
+						true, null);
+
+				newUser.setPasswordReset(false);
+				newUser.setReminderQueryQuestion(secQ);
+				newUser.setReminderQueryAnswer(secA);
+				newUser.setAgreedToTermsOfUse(tou);
+
+				// Adding phones
+
+				ServiceContext serviceContext = ServiceContextFactory.getInstance(
+						request);
+
+				if (Validator.isNotNull(homePhone)) {
+					PhoneLocalServiceUtil.addPhone(
+							newUser.getUserId(), Contact.class.getName(),
+							newUser.getContactId(), homePhone, StringPool.BLANK, 11008, true,
+							serviceContext);
+				}
+
+				if (Validator.isNotNull(mobilePhone)) {
+					PhoneLocalServiceUtil.addPhone(
+							newUser.getUserId(), Contact.class.getName(),
+							newUser.getContactId(), mobilePhone, StringPool.BLANK, 11011, true,
+							serviceContext);
+				}
+
+				// Adding address
+
+				long typeId = 11000;
+
+				AddressLocalServiceUtil.addAddress(
 						newUser.getUserId(), Contact.class.getName(),
-newUser.getContactId(), homePhone, StringPool.BLANK, 11008, true,
-						serviceContext);
+						newUser.getContactId(), street1, street2, StringPool.BLANK, city, zip, regionId,
+						countryId, typeId, true, true, serviceContext);
+				UserLocalServiceUtil.updateUser(newUser);
+
+				SessionMessages.add(request, "registration-successful");
+			} catch (PortalException e) {
+
+				// Catching duplicate username/email in DB
+
+				Class<?> emailDup =
+						UserEmailAddressException.MustNotBeDuplicate.class;
+				Class<?> userDup = UserScreenNameException.MustNotBeDuplicate.class;
+
+				if (e.getClass() == emailDup) {
+					SessionErrors.add(request, "email-is-in-use");
+				} else if (e.getClass() == userDup) {
+					SessionErrors.add(request, "username-is-in-use");
+				} else {
+					e.printStackTrace();
+				}
+
+				// Used to keep forms filled after failed validation
+
+				PortalUtil.copyRequestParameters(request, response);
 			}
-
-			if (Validator.isNotNull(mobilePhone)) {
-				PhoneLocalServiceUtil.addPhone(
-						newUser.getUserId(), Contact.class.getName(),
-newUser.getContactId(), mobilePhone, StringPool.BLANK, 11011, true,
-						serviceContext);
-			}
-
-			// Adding address
-
-			long typeId = 11000;
-
-			AddressLocalServiceUtil.addAddress(
-					newUser.getUserId(), Contact.class.getName(),
-newUser.getContactId(), street1, street2, StringPool.BLANK, city, zip, regionId,
-					countryId, typeId, true, true, serviceContext);
-			UserLocalServiceUtil.updateUser(newUser);
-
-			SessionMessages.add(request, "registrationSuccessful");
-		} catch (PortalException e) {
-			e.printStackTrace();
-
-			// Catching duplicate username/email in DB
-
-			Class<?> emailDup =
-				UserEmailAddressException.MustNotBeDuplicate.class;
-			Class<?> userDup = UserScreenNameException.MustNotBeDuplicate.class;
-
-			if (e.getClass() == emailDup) {
-				errors.add("email-is-in-use");
-			} else if (e.getClass() == userDup) {
-				errors.add("username-is-in-use");
-			}
-
-			// Used to keep forms filled after failed validation
-
+		} else {
 			PortalUtil.copyRequestParameters(request, response);
 		}
 	}

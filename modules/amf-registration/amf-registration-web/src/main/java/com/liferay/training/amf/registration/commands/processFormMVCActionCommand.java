@@ -1,7 +1,5 @@
 package com.liferay.training.amf.registration.commands;
 
-import static com.liferay.training.amf.registration.validator.RegistrationValidator.isValidPhone;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -13,9 +11,8 @@ import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.training.amf.registration.constants.RegistrationPortletKeys;
-import com.liferay.training.amf.registration.validator.RegistrationValidator;
+import com.liferay.training.amf.registration.service.AmfUserLocalServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,43 +94,14 @@ public class processFormMVCActionCommand extends BaseMVCActionCommand {
 		String secA = ParamUtil.getString(request, "security_answer");
 		boolean tou = ParamUtil.getBoolean(request, "accepted_tou");
 
-		// Validating all form data
 
-		RegistrationValidator.isValidForm(
-				errors, firstName, lastName, emailAddress, userName, b_month,
-b_day, b_year, password1, password2, street1, street2, city, regionId, zip,
-secQ, secA, tou);
+        AmfUserLocalServiceUtil.addAmfUser(request, response, errors,
+                companyId, creatorUserId, firstName, lastName, emailAddress,
+                userName, b_month, b_day, b_year, male, password1,
+                password2, homePhone, mobilePhone, street1, street2, city,
+                regionId, countryId, zip, secQ, secA, tou);
 
-		// Phone validation
 
-		if (Validator.isNotNull(homePhone)) {
-			isValidPhone(homePhone, errors);
-		}
-
-		if (Validator.isNotNull(mobilePhone)) {
-			isValidPhone(mobilePhone, errors);
-		}
-
-		// If no validator returns error, register user and address
-
-		if (errors.size() == 0) {
-			User newUser;
-
-			/**
-			AmfUserLocalServiceUtil.addAmfUser(request, response, errors,
-					companyId, creatorUserId, firstName, lastName, emailAddress,
-					userName, b_month, b_day, b_year, male, password1,
-					password2, homePhone, mobilePhone, street1, street2, city,
-					regionId, countryId, zip, secQ, secA, tou);
-			 **/
-		}
-
-		for (String error : errors) {
-			SessionErrors.add(request, error);
-		}
-
-		response.setRenderParameter("actionResult", errors.toString());
-		super.processAction(request, response);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

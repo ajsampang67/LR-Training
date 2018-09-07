@@ -1,4 +1,4 @@
-package com.liferay.training.amf.registration.validator;
+package com.liferay.training.amf.registration.service.validator;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.RegionServiceUtil;
@@ -261,9 +261,6 @@ String street1, String street2, String city, long regionId, String zip,
 
 		if (Validator.isNull(question)) {
 			errors.add("please-select-a-security-question-and-answer");
-			result = false;
-		} else if(!validQs.contains(question)) {
-			errors.add("please-select-a-security-question-from-the-list");
 			result = false;
 		}
 

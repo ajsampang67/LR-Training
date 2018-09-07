@@ -1,6 +1,7 @@
 package com.liferay.training.amf.registration.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.training.amf.registration.constants.RegistrationPortletKeys;
 import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.Portlet;
@@ -18,10 +19,10 @@ import java.io.IOException;
 	property = {
 		"com.liferay.portlet.display-category=AMF",
 		"com.liferay.portlet.instanceable=true",
+        "javax.portlet.name="+ RegistrationPortletKeys.REGISTRATION,
 		"javax.portlet.display-name=AMF Registration",
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user",
-		"mvc.command.name=register"
 	},
 	service = Portlet.class
 )

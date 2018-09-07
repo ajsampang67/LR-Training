@@ -5,8 +5,15 @@ import com.liferay.training.amf.registration.search.constants.AmfRegistrationSea
 
 import java.io.IOException;
 
-import javax.portlet.*;
 
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.GenericPortlet;
+import javax.portlet.Portlet;
+import javax.portlet.PortletException;
+import javax.portlet.PortletRequestDispatcher;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 import javax.xml.namespace.QName;
 
 import org.osgi.service.component.annotations.Component;

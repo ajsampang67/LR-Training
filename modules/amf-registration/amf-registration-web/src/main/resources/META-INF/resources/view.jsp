@@ -1,3 +1,5 @@
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="java.util.Locale" %>
 <%@ include file="/init.jsp" %>
 
 <!-- TODO: Switch to SessionErrors for errors -->
@@ -6,6 +8,7 @@
 <c:choose>
     <c:when test="${!themeDisplay.isSignedIn()}">
         <div>
+            <liferay-ui:success key="registration-successful" message="registration-successful"/>
             <form action="<portlet:actionURL name="/processForm" />"
                   method="post">
                 <aui:fieldset-group markupView="lexicon">
