@@ -21,12 +21,12 @@ import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.AddressLocalServiceUtil;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.service.PhoneLocalServiceUtil;
+import com.liferay.portal.kernel.service.AddressLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.PhoneLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -34,12 +34,12 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.training.amf.registration.service.base.AmfUserLocalServiceBaseImpl;
 import com.liferay.training.amf.registration.service.validator.RegistrationValidator;
-
-import java.util.List;
-import java.util.Locale;
+import jdk.nashorn.internal.ir.annotations.Reference;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
+import java.util.List;
+import java.util.Locale;
 
 import static com.liferay.training.amf.registration.service.validator.RegistrationValidator.isValidPhone;
 
@@ -64,7 +64,7 @@ public class AmfUserLocalServiceImpl extends AmfUserLocalServiceBaseImpl {
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. Always use {@link
-	 * com.liferay.training.amf.registration.service.AmfUserLocalServiceUtil} to
+	 * com.liferay.training.amf.registration.service.Amf_userLocalService} to
 	 * access the amf user local service.
 	 */
 	public void addAmfUser(
@@ -100,14 +100,14 @@ secQ, secA, tou);
 		if(SessionErrors.isEmpty(request)) {
 			User newUser;
 			try {
-				Group guest = GroupLocalServiceUtil.getGroup(
+				Group guest = _groupLocalService.getGroup(
 						companyId, GroupConstants.GUEST);
 				long[] organizationIds = {};
 				long[] groupIds = {guest.getGroupId()};
 				long[] roleIds = {};
 				long[] userGroupIds = {};
 
-				newUser = UserLocalServiceUtil.addUser(
+				newUser = _userLocalService.addUser(
 						creatorUserId, companyId, false, password1, password2,
 						false, userName, emailAddress, 0, StringPool.BLANK, Locale.US, firstName,
 						StringPool.BLANK, lastName, 0, 0, male == 1, b_month, b_day,
@@ -125,14 +125,14 @@ secQ, secA, tou);
 						request);
 
 				if (Validator.isNotNull(homePhone)) {
-					PhoneLocalServiceUtil.addPhone(
+					_phoneLocalService.addPhone(
 							newUser.getUserId(), Contact.class.getName(),
 							newUser.getContactId(), homePhone, StringPool.BLANK, 11008, true,
 							serviceContext);
 				}
 
 				if (Validator.isNotNull(mobilePhone)) {
-					PhoneLocalServiceUtil.addPhone(
+					_phoneLocalService.addPhone(
 							newUser.getUserId(), Contact.class.getName(),
 							newUser.getContactId(), mobilePhone, StringPool.BLANK, 11011, true,
 							serviceContext);
@@ -142,11 +142,11 @@ secQ, secA, tou);
 
 				long typeId = 11000;
 
-				AddressLocalServiceUtil.addAddress(
+				_addressLocalService.addAddress(
 						newUser.getUserId(), Contact.class.getName(),
 						newUser.getContactId(), street1, street2, StringPool.BLANK, city, zip, regionId,
 						countryId, typeId, true, true, serviceContext);
-				UserLocalServiceUtil.updateUser(newUser);
+				_userLocalService.updateUser(newUser);
 
 				SessionMessages.add(request, "registration-successful");
 			} catch (PortalException e) {
@@ -173,5 +173,13 @@ secQ, secA, tou);
 			PortalUtil.copyRequestParameters(request, response);
 		}
 	}
+	@Reference
+	private GroupLocalService _groupLocalService;
+	@Reference
+	private UserLocalService _userLocalService;
+	@Reference
+	private AddressLocalService _addressLocalService;
+	@Reference
+	private PhoneLocalService _phoneLocalService;
 
 }

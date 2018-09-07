@@ -1,28 +1,15 @@
 package com.liferay.amf.newsletter.portlet;
 
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.addToHashMapList;
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getArticleFieldValue;
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getMonthDisplayName;
-
 import com.liferay.amf.newsletter.constants.NewsletterPortletKeys;
 import com.liferay.journal.model.JournalArticle;
-import com.liferay.journal.service.JournalArticleLocalServiceUtil;
+import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
-
-import java.io.IOException;
-
-import java.time.Month;
-import java.time.format.TextStyle;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.GenericPortlet;
 import javax.portlet.Portlet;
@@ -30,8 +17,18 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import java.io.IOException;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
-import org.osgi.service.component.annotations.Component;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.addToHashMapList;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getArticleFieldValue;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getMonthDisplayName;
 
 /**
  * @author Alfred Sampang
@@ -80,9 +77,9 @@ public class NewsletterPortlet extends GenericPortlet {
 
 		// Get journal articles that are published only
 
-		List allJournalArticles = JournalArticleLocalServiceUtil.getArticles(
+		List allJournalArticles = _journalArticleLocalService.getArticles(
 			groupId, 0, 0, 0,
-			JournalArticleLocalServiceUtil.getArticlesCount(groupId, 0, 0));
+			_journalArticleLocalService.getArticlesCount(groupId, 0, 0));
 		List journalArticles = new ArrayList();
 
 		//TODO Dynamically get Ids
@@ -96,7 +93,7 @@ public class NewsletterPortlet extends GenericPortlet {
 
 			try {
 				JournalArticle newestVersion =
-					JournalArticleLocalServiceUtil.getLatestArticle(
+					_journalArticleLocalService.getLatestArticle(
 						journalArticle.getResourcePrimKey());
 
 				if (!journalArticles.contains(newestVersion)) {
@@ -193,6 +190,9 @@ public class NewsletterPortlet extends GenericPortlet {
 		renderRequest.setAttribute("years", yearsArray);
 		super.render(renderRequest, renderResponse);
 	}
+
+	@Reference
+	private JournalArticleLocalService _journalArticleLocalService;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		NewsletterPortlet.class);

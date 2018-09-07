@@ -7,9 +7,19 @@ import com.liferay.training.amf.registration.search.constants.AmfSearchResultsPo
 
 import java.io.IOException;
 
-import javax.portlet.*;
 
 import org.osgi.service.component.annotations.Component;
+
+import javax.portlet.Event;
+import javax.portlet.EventRequest;
+import javax.portlet.EventResponse;
+import javax.portlet.GenericPortlet;
+import javax.portlet.Portlet;
+import javax.portlet.PortletException;
+import javax.portlet.PortletRequestDispatcher;
+import javax.portlet.ProcessEvent;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 /**
  * @author liferay
@@ -30,7 +40,7 @@ public class AmfSearchResultsPortlet extends GenericPortlet {
 
 	@ProcessEvent(qname ="{localhost}ipc.search")
 	public void arrivalDestination(
-		EventRequest request, EventResponse response) {
+			EventRequest request, EventResponse response) {
 
 		Event event = request.getEvent();
 

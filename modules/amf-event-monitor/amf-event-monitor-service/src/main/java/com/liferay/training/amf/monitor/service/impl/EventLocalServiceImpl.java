@@ -14,17 +14,15 @@
 
 package com.liferay.training.amf.monitor.service.impl;
 
-import com.liferay.counter.kernel.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ResourceLocalServiceUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.training.amf.monitor.model.Event;
-import com.liferay.training.amf.monitor.service.EventLocalServiceUtil;
 import com.liferay.training.amf.monitor.service.base.EventLocalServiceBaseImpl;
+import com.liferay.training.amf.monitor.util.ActionKeys;
 
+import javax.swing.Action;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 
 /**
@@ -46,7 +44,8 @@ public class EventLocalServiceImpl extends EventLocalServiceBaseImpl {
 	/**
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link EventLocalServiceUtil} to access the event local service.
+	 * Never reference this class directly. Always use
+	 * {@link EventLocalServiceUtil} to access the event local service.
 	 */
 	public void addEvent(
 		long companyId, long groupId, User user, String ipAddress,
@@ -58,8 +57,9 @@ public class EventLocalServiceImpl extends EventLocalServiceBaseImpl {
 
 		String formattedEventDate = sdf.format(eventDate);
 
-		long eventId = CounterLocalServiceUtil.increment(Event.class.getName());
-		Event newEvent = EventLocalServiceUtil.createEvent(eventId);
+		long eventId =
+				counterLocalService.increment(Event.class.getName());
+		Event newEvent = eventLocalService.createEvent(eventId);
 
 		newEvent.setCompanyId(companyId);
 		newEvent.setGroupId(groupId);
@@ -72,19 +72,18 @@ public class EventLocalServiceImpl extends EventLocalServiceBaseImpl {
 
 		String[] guestPermissions = {};
 		try {
-			ResourceLocalServiceUtil.addResources(
+			resourceLocalService.addResources(
 					companyId, groupId, user.getUserId(), Event.class.getName(),
 					eventId, true, false, false);
 
-			ResourceLocalServiceUtil.addModelResources(
+			resourceLocalService.addModelResources(
 					companyId, groupId, user.getUserId(), Event.class.getName(),
-					eventId, new String[] {"VIEW"}, guestPermissions);
+					eventId, new String[] {ActionKeys.VIEW}, guestPermissions);
 
 		} catch (PortalException e) {
 			e.printStackTrace();
 		}
 
-		EventLocalServiceUtil.addEvent(newEvent);
+		eventLocalService.addEvent(newEvent);
 	}
-
 }

@@ -41,6 +41,14 @@ public class AmfUserLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.liferay.training.amf.registration.service.impl.AmfUserLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link
+	* AmfUserLocalServiceUtil} to
+	* access the amf user local service.
+	*/
 	public static void addAmfUser(javax.portlet.ActionRequest request,
 		javax.portlet.ActionResponse response,
 		java.util.List<java.lang.String> errors, long companyId,

@@ -48,6 +48,14 @@ public interface AmfUserLocalService extends BaseLocalService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link AmfUserLocalServiceUtil} to access the amf user local service. Add custom service methods to {@link com.liferay.training.amf.registration.service.impl.AmfUserLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+
+	/**
+	* NOTE FOR DEVELOPERS:
+	*
+	* Never reference this class directly. Always use {@link
+	* AmfUserLocalServiceUtil} to
+	* access the amf user local service.
+	*/
 	public void addAmfUser(ActionRequest request, ActionResponse response,
 		List<java.lang.String> errors, long companyId, long creatorUserId,
 		java.lang.String firstName, java.lang.String lastName,
