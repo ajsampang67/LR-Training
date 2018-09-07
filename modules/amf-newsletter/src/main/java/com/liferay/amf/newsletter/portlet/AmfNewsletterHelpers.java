@@ -1,4 +1,4 @@
-package com.liferay.amf.newsletter2.portlet;
+package com.liferay.amf.newsletter.portlet;
 
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.portal.kernel.exception.SystemException;

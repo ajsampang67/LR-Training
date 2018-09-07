@@ -1,10 +1,10 @@
-package com.liferay.amf.newsletter2.portlet;
+package com.liferay.amf.newsletter.portlet;
 
-import static com.liferay.amf.newsletter2.portlet.AmfNewsletterHelpers.addToHashMapList;
-import static com.liferay.amf.newsletter2.portlet.AmfNewsletterHelpers.getArticleFieldValue;
-import static com.liferay.amf.newsletter2.portlet.AmfNewsletterHelpers.getMonthDisplayName;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.addToHashMapList;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getArticleFieldValue;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getMonthDisplayName;
 
-import com.liferay.amf.newsletter2.constants.Newsletter2PortletKeys;
+import com.liferay.amf.newsletter.constants.NewsletterPortletKeys;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -42,12 +42,12 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.display-category=AMF",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=AMF Newsletter",
-		"javax.portlet.name=" + Newsletter2PortletKeys.NEWSLETTER_PORTLET_NAME,
+		"javax.portlet.name=" + NewsletterPortletKeys.NEWSLETTER_PORTLET_NAME,
 		"javax.portlet.security-role-ref=power-user,user"
 	},
 	service = Portlet.class
 )
-public class Newsletter2Portlet extends GenericPortlet {
+public class NewsletterPortlet extends GenericPortlet {
 
 	@Override
 	public void doView(RenderRequest request, RenderResponse response)
@@ -195,6 +195,6 @@ public class Newsletter2Portlet extends GenericPortlet {
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
-		Newsletter2Portlet.class);
+		NewsletterPortlet.class);
 
 }

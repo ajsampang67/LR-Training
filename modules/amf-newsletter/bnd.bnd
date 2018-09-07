@@ -1,0 +1,4 @@
+Bundle-Name: AMF Newsletter
+Bundle-SymbolicName: com.liferay.amf.newsletter
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.amf.newsletter2.constants}

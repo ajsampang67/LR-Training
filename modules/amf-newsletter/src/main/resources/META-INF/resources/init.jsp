@@ -8,7 +8,7 @@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
-<%@ page import="com.liferay.amf.newsletter2.constants.Newsletter2PortletKeys" %><%@
+<%@ page import="com.liferay.amf.newsletter.constants.NewsletterPortletKeys" %><%@
 page import="com.liferay.journal.model.JournalArticle" %><%@
 page import="com.liferay.journal.service.JournalArticleLocalServiceUtil" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@

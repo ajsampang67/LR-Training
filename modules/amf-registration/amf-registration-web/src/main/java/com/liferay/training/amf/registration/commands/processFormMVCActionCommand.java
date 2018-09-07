@@ -1,5 +1,7 @@
 package com.liferay.training.amf.registration.commands;
 
+import static com.liferay.training.amf.registration.validator.RegistrationValidator.isValidPhone;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -14,16 +16,18 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.training.amf.registration.constants.RegistrationPortletKeys;
 import com.liferay.training.amf.registration.validator.RegistrationValidator;
-import org.osgi.service.component.annotations.Component;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.liferay.training.amf.registration.validator.RegistrationValidator.isValidPhone;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 
+import org.osgi.service.component.annotations.Component;
 
+/**
+ * @author Brian Wing Shun Chan
+ */
 @Component(
 		immediate = true,
 		property = {
@@ -34,109 +38,105 @@ import static com.liferay.training.amf.registration.validator.RegistrationValida
 )
 public class processFormMVCActionCommand extends BaseMVCActionCommand {
 
-    @Override
-    protected void doProcessAction(
-            ActionRequest request, ActionResponse response) throws Exception {
+	@Override
+	protected void doProcessAction(
+		ActionRequest request, ActionResponse response) throws Exception {
 
-        // List for errors to be checked at end
+		// List for errors to be checked at end
 
-        List<String> errors = new ArrayList<>();
-        long companyId = PortalUtil.getDefaultCompanyId();
-        long creatorUserId = 0;
-        try {
-            creatorUserId = UserLocalServiceUtil.getDefaultUserId(
-                    companyId);
-        } catch (PortalException e) {
-            _log.fatal(e);
-        }
+		List<String> errors = new ArrayList<>();
+		long companyId = PortalUtil.getDefaultCompanyId();
+		long creatorUserId = 0;
+		try {
+			creatorUserId = UserLocalServiceUtil.getDefaultUserId(companyId);
+		} catch (PortalException e) {
+			_log.fatal(e);
+		}
 
-        // Basic Info
+		// Basic Info
 
-        String firstName = ParamUtil.getString(request, "first_name");
-        String lastName = ParamUtil.getString(request, "last_name");
-        String emailAddress = ParamUtil.getString(
-                request, "email_address");
-        String userName = ParamUtil.getString(request, "username");
+		String firstName = ParamUtil.getString(request, "first_name");
+		String lastName = ParamUtil.getString(request, "last_name");
+		String emailAddress = ParamUtil.getString(request, "email_address");
+		String userName = ParamUtil.getString(request, "username");
 
-        // Birthday, male
+		// Birthday, male
 
-        int b_month = ParamUtil.getInteger(request, "b_month");
-        int b_day = ParamUtil.getInteger(request, "b_day");
-        int b_year = ParamUtil.getInteger(request, "b_year");
+		int b_month = ParamUtil.getInteger(request, "b_month");
+		int b_day = ParamUtil.getInteger(request, "b_day");
+		int b_year = ParamUtil.getInteger(request, "b_year");
 
-        int male = ParamUtil.getInteger(request, "male");
+		int male = ParamUtil.getInteger(request, "male");
 
-        // Password
+		// Password
 
-        String password1 = ParamUtil.getString(request, "password1");
-        String password2 = ParamUtil.getString(request, "password2");
+		String password1 = ParamUtil.getString(request, "password1");
+		String password2 = ParamUtil.getString(request, "password2");
 
-        // Phone
+		// Phone
 
-        String homePhone = ParamUtil.getString(request, "home_phone");
-        String mobilePhone = ParamUtil.getString(
-                request, "mobile_phone");
+		String homePhone = ParamUtil.getString(request, "home_phone");
+		String mobilePhone = ParamUtil.getString(request, "mobile_phone");
 
-        // Address
+		// Address
 
-        String street1 = ParamUtil.getString(request, "address");
-        String street2 = ParamUtil.getString(request, "address2");
-        String city = ParamUtil.getString(request, "city");
-        long regionId = ParamUtil.getLong(request, "state");
-        long countryId = 0;
-        try {
-            countryId = CountryServiceUtil.getCountryByA2(
-                    "US").getCountryId();
-        } catch (PortalException e) {
-            _log.error(e);
-        }
+		String street1 = ParamUtil.getString(request, "address");
+		String street2 = ParamUtil.getString(request, "address2");
+		String city = ParamUtil.getString(request, "city");
+		long regionId = ParamUtil.getLong(request, "state");
+		long countryId = 0;
+		try {
+			countryId = CountryServiceUtil.getCountryByA2("US").getCountryId();
+		} catch (PortalException e) {
+			_log.error(e);
+		}
 
-        String zip = ParamUtil.getString(request, "zip");
+		String zip = ParamUtil.getString(request, "zip");
 
-        String secQ = ParamUtil.getString(request, "security_question");
-        String secA = ParamUtil.getString(request, "security_answer");
-        boolean tou = ParamUtil.getBoolean(request, "accepted_tou");
+		String secQ = ParamUtil.getString(request, "security_question");
+		String secA = ParamUtil.getString(request, "security_answer");
+		boolean tou = ParamUtil.getBoolean(request, "accepted_tou");
 
-        // Validating all form data
+		// Validating all form data
 
+		RegistrationValidator.isValidForm(
+				errors, firstName, lastName, emailAddress, userName, b_month,
+b_day, b_year, password1, password2, street1, street2, city, regionId, zip,
+secQ, secA, tou);
 
-        RegistrationValidator.isValidForm(
-                errors, firstName, lastName, emailAddress, userName, b_month, b_day, b_year,
-                password1, password2, street1, street2, city, regionId, zip, secQ, secA,
-                tou);
+		// Phone validation
 
-        // Phone validation
+		if (Validator.isNotNull(homePhone)) {
+			isValidPhone(homePhone, errors);
+		}
 
-        if (Validator.isNotNull(homePhone)) {
-            isValidPhone(homePhone, errors);
-        }
+		if (Validator.isNotNull(mobilePhone)) {
+			isValidPhone(mobilePhone, errors);
+		}
 
-        if (Validator.isNotNull(mobilePhone)) {
-            isValidPhone(mobilePhone, errors);
-        }
+		// If no validator returns error, register user and address
 
-        // If no validator returns error, register user and address
-        if (errors.size() == 0) {
-            User newUser;
+		if (errors.size() == 0) {
+			User newUser;
 
-            /**
-            AmfUserLocalServiceUtil.addAmfUser(request, response, errors,
-                    companyId, creatorUserId, firstName, lastName, emailAddress,
-                    userName, b_month, b_day, b_year, male, password1,
-                    password2, homePhone, mobilePhone, street1, street2, city,
-                    regionId, countryId, zip, secQ, secA, tou);
-             **/
-        }
+			/**
+			AmfUserLocalServiceUtil.addAmfUser(request, response, errors,
+					companyId, creatorUserId, firstName, lastName, emailAddress,
+					userName, b_month, b_day, b_year, male, password1,
+					password2, homePhone, mobilePhone, street1, street2, city,
+					regionId, countryId, zip, secQ, secA, tou);
+			 **/
+		}
 
-        for(String error: errors){
-            SessionErrors.add(request, error);
-        }
-        response.setRenderParameter("actionResult", errors.toString());
-        super.processAction(request,response);
-    }
+		for (String error : errors) {
+			SessionErrors.add(request, error);
+		}
 
+		response.setRenderParameter("actionResult", errors.toString());
+		super.processAction(request, response);
+	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		processFormMVCActionCommand.class);
 
-    private static final Log _log =
-            LogFactoryUtil.getLog(processFormMVCActionCommand.class);
 }

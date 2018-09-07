@@ -45,7 +45,7 @@
 					String assetPublisherPortletName = StringPool.BLANK;
 
 					for (Portlet portlet : allPortlets) {
-						if (portlet.getRootPortletId().equals(Newsletter2PortletKeys.ASSET_PUBLISHER_ID)) {
+						if (portlet.getRootPortletId().equals(NewsletterPortletKeys.ASSET_PUBLISHER_ID)) {
 							assetPublisherPortletName =
 									portlet.getPortletId();
 						}
@@ -68,7 +68,7 @@
 						<a href="<%= issueURL %>">
 						<%= JournalArticleLocalServiceUtil.getArticleContent(
 								issue,
-								Newsletter2PortletKeys.ISSUE_LISTING_TEMPLATE_KEY,
+								NewsletterPortletKeys.ISSUE_LISTING_TEMPLATE_KEY,
 								ActionKeys.VIEW,
 								languageId,
 								new PortletRequestModel(

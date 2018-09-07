@@ -11,6 +11,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author Brian Wing Shun Chan
+ */
 public class RegistrationValidator {
 
 	public static boolean acceptedTOU(
@@ -149,6 +152,23 @@ public class RegistrationValidator {
 		return result;
 	}
 
+	public static void isValidForm(List<String> errors, String firstName,
+		String lastName, String emailAddress, String userName, int b_month,
+		int b_day, int b_year, String password1, String password2,
+String street1, String street2, String city, long regionId, String zip,
+		String secQ, String secA, boolean tou) {
+
+		isValidFName(firstName, errors);
+		isValidLName(lastName, errors);
+		isValidEmail(emailAddress, errors);
+		isValidUsername(userName, errors);
+		isValidBirthday(b_month, b_day, b_year, errors);
+		isValidPassword(password1, password2, errors);
+		isValidAddress(street1, street2, city, regionId, zip, errors);
+		isValidSecurityQ(secQ, secA, errors);
+		acceptedTOU(tou, errors);
+	}
+
 	public static boolean isValidLName(
 		final String lname, final List<String> errors) {
 
@@ -171,7 +191,7 @@ public class RegistrationValidator {
 	public static boolean isValidPassword(
 		final String p1, final String p2, final List<String> errors) {
 
-	    if(Validator.isNull(p1) || Validator.isNull(p2)){
+		if (Validator.isNull(p1) || Validator.isNull(p2)) {
 			errors.add("please-enter-a-password-and-repeat");
 		}
 
@@ -275,23 +295,6 @@ public class RegistrationValidator {
 		}
 
 		return result;
-	}
-
-	public static void isValidForm(List<String> errors, String firstName,
-		String lastName, String emailAddress, String userName, int b_month,
-        int b_day, int b_year, String password1, String password2, String street1,
-        String street2, String city, long regionId, String zip, String secQ,
-        String secA, boolean tou) {
-
-		isValidFName(firstName, errors);
-		isValidLName(lastName, errors);
-		isValidEmail(emailAddress, errors);
-		isValidUsername(userName, errors);
-		isValidBirthday(b_month, b_day, b_year, errors);
-		isValidPassword(password1, password2, errors);
-		isValidAddress(street1, street2, city, regionId, zip, errors);
-		isValidSecurityQ(secQ, secA, errors);
-		acceptedTOU(tou, errors);
 	}
 
 }

@@ -1,4 +1,3 @@
-<%@ page import="com.liferay.portal.kernel.util.PortalUtil" %>
 <%@ include file="/init.jsp" %>
 
 <!-- TODO: Switch to SessionErrors for errors -->

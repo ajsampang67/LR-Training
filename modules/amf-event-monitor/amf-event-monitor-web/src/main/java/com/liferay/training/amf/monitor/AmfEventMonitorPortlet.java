@@ -1,12 +1,14 @@
 package com.liferay.training.amf.monitor;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-
-import java.io.IOException;
-
-import javax.portlet.*;
-
 import org.osgi.service.component.annotations.Component;
+
+import javax.portlet.Portlet;
+import javax.portlet.PortletException;
+import javax.portlet.PortletRequestDispatcher;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import java.io.IOException;
 
 /**
  * @author liferay

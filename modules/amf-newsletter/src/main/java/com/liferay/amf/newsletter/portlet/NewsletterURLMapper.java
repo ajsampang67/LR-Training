@@ -1,6 +1,6 @@
-package com.liferay.amf.newsletter2.portlet;
+package com.liferay.amf.newsletter.portlet;
 
-import com.liferay.amf.newsletter2.constants.Newsletter2PortletKeys;
+import com.liferay.amf.newsletter.constants.NewsletterPortletKeys;
 import com.liferay.portal.kernel.portlet.DefaultFriendlyURLMapper;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
 
@@ -12,7 +12,7 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	property = {
 		"com.liferay.portlet.friendly-url-routes=META-INF/resources/friendly-url-routes/routes.xml",
-		"javax.portlet.name=" + Newsletter2PortletKeys.NEWSLETTER_PORTLET_NAME
+		"javax.portlet.name=" + NewsletterPortletKeys.NEWSLETTER_PORTLET_NAME
 	},
 	service = FriendlyURLMapper.class
 )
