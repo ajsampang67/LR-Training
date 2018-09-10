@@ -1,4 +1,4 @@
-<%@ include file="init.jsp" %>
+<%@ include file="/init.jsp" %>
 
 <form action="<portlet:actionURL/>" class="aui top-label" method="post">
 	<aui:fieldset class="top-label">

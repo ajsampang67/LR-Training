@@ -1,14 +1,12 @@
 package com.liferay.training.amf.registration.search.portlet;
 
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.training.amf.registration.search.constants.AmfSearchResultsPortletKeys;
 
 import java.io.IOException;
-
-
-import org.osgi.service.component.annotations.Component;
 
 import javax.portlet.Event;
 import javax.portlet.EventRequest;
@@ -20,6 +18,8 @@ import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.ProcessEvent;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * @author liferay
@@ -38,13 +38,14 @@ import javax.portlet.RenderResponse;
 )
 public class AmfSearchResultsPortlet extends GenericPortlet {
 
-	@ProcessEvent(qname ="{localhost}ipc.search")
+	@ProcessEvent(qname = "{localhost}ipc.search")
 	public void arrivalDestination(
-			EventRequest request, EventResponse response) {
+		EventRequest request, EventResponse response) {
 
 		Event event = request.getEvent();
 
 		String zip = (String)event.getValue();
+
 		String error = "";
 
 		boolean isEmpty = Validator.isNull(zip);
@@ -59,7 +60,7 @@ public class AmfSearchResultsPortlet extends GenericPortlet {
 		// Check that the zip code is valid
 
 		if (isEmpty || !isNum || !isFive) {
-			error = "Please enter a valid 5-digit zip code";
+			error = "please-enter-a-valid-5-digit-zip-code";
 		}
 
 		response.setRenderParameter("error", error);
@@ -83,7 +84,7 @@ public class AmfSearchResultsPortlet extends GenericPortlet {
 
 		// Send error if there is one, otherwise show "Search results for ..."
 
-		if (Validator.isNotNull(error))renderResponse.setTitle(error);
+		if (Validator.isNotNull(error))SessionErrors.add(renderRequest, error);
 		else
 			renderResponse.setTitle(
 				"Search Results for ".concat(HtmlUtil.escape(zip)));

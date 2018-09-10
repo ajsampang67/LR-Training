@@ -13,15 +13,13 @@ request.setAttribute("tab", tab);
 	value="${tab}"
 >
 
-	<!-- All section, print everything up to 20 items using Java tags -->
-
 	<%
 	PortletURL portletURL = renderResponse.createRenderURL();
 	int eventCount = EventLocalServiceUtil.getEventsCount();
 
 	// Checking if user has permission to see all activity
 
-	List preEventList = EventLocalServiceUtil.getEvents(0, eventCount);
+	List unfilteredEventList = EventLocalServiceUtil.getEvents(0, eventCount);
 
 	/** 1)Grab portlet, check for portlet-resource permission
 	 *   VIEW-ALL-EVENTS
@@ -31,65 +29,28 @@ request.setAttribute("tab", tab);
 	 */
 	List eventList = new ArrayList();
 
-	if (!permissionChecker.hasPermission(scopeGroupId, portletDisplay.getRootPortletId(), portletDisplay.getResourcePK(), "VIEW_ALL_EVENTS")) {
-		for (Object obj : preEventList) {
+	if (!permissionChecker.hasPermission(
+        scopeGroupId, portletDisplay.getRootPortletId(),
+        portletDisplay.getResourcePK(), "VIEW_ALL_EVENTS")) {
+		for (Object obj : unfilteredEventList) {
 			Event event = (Event)obj;
-
 			if (event.getUserId() == user.getUserId())
 				eventList.add(obj);
 		}
-	} else {
-		eventList = preEventList;
 	}
+	else {
+		eventList = unfilteredEventList;
+	}
+	List displayList = eventList;
 	%>
 
+	<!-- All section, show everything up to 20 items per page -->
 	<liferay-ui:section>
 		<% request.setAttribute("tab", "All"); %>
-		<liferay-ui:search-container
-			delta="20"
-			deltaConfigurable="false"
-			emptyResultsMessage="No more items"
-			iteratorURL="<%= portletURL %>"
-		>
-
-			<%-- Parse list for pages --%>
-
-			<%
-			List eventResults = ListUtil.subList((eventList), searchContainer.getStart(), searchContainer.getEnd());
-			%>
-
-			<liferay-ui:search-container-results>
-
-				<%
-				searchContainer.setResults(eventResults);
-				searchContainer.setTotal(eventList.size());
-				%>
-
-			</liferay-ui:search-container-results>
-
-			<!-- Snippet in META-INF/resources/WEB-INF/tags -->
-			<liferay-ui:search-container-row
-				className="com.liferay.training.amf.monitor.model.Event"
-				modelVar="event"
-			>
-
-				<%
-				String eventVal =
-						event.getEventDate() + " " +
-								event.getScreenName() + " " +
-								"(" + event.getUserId() + ")" + " " +
-								event.getIpAddress() + " " +
-								event.getEventType();
-				%>
-
-				<liferay-ui:search-container-column-text name="Event" value="<%= eventVal %>" />
-			</liferay-ui:search-container-row>
-
-			<liferay-ui:search-iterator />
-		</liferay-ui:search-container>
+        <%@ include file="/_monitor-search-container.jsp"%>
 	</liferay-ui:section>
 
-	<!-- Registration, show only registration events -->
+	<!-- Registration section, show only registration events -->
 	<liferay-ui:section>
 		<% request.setAttribute("tab", "Registration"); %>
 
@@ -103,50 +64,13 @@ request.setAttribute("tab", tab);
 				regList.add(o);
 			}
 		}
+		displayList = regList;
 		%>
 
-		<liferay-ui:search-container
-			delta="20"
-			deltaConfigurable="false"
-			emptyResultsMessage="No more items"
-			iteratorURL="<%= portletURL %>"
-		>
-
-			<%
-			List eventResults = ListUtil.subList((regList), searchContainer.getStart(), searchContainer.getEnd());
-			%>
-
-			<liferay-ui:search-container-results>
-
-				<%
-				searchContainer.setResults(eventResults);
-				searchContainer.setTotal(regList.size());
-				%>
-
-			</liferay-ui:search-container-results>
-
-			<liferay-ui:search-container-row
-				className="com.liferay.training.amf.monitor.model.Event"
-				modelVar="event"
-			>
-
-				<%
-				String eventVal =
-						event.getEventDate() + " " +
-								event.getScreenName() + " " +
-								"(" + event.getUserId() + ")" + " " +
-								event.getIpAddress() + " " +
-								event.getEventType();
-				%>
-
-				<liferay-ui:search-container-column-text name="Event" value="<%= eventVal %>" />
-			</liferay-ui:search-container-row>
-
-			<liferay-ui:search-iterator />
-		</liferay-ui:search-container>
+		<%@ include file="/_monitor-search-container.jsp"%>
 	</liferay-ui:section>
 
-	<!-- Login, show only login events -->
+	<!-- Login section, show only login events -->
 	<liferay-ui:section>
 		<% request.setAttribute("tab", "Login"); %>
 
@@ -156,52 +80,15 @@ request.setAttribute("tab", tab);
 		for (Object o : eventList) {
 			Event e = (Event)o;
 
+			System.out.println(e.getEventType());
 			if (e.getEventType().equals("Login")) {
 				logList.add(o);
 			}
 		}
+		displayList = logList;
+
 		%>
 
-		<liferay-ui:search-container
-			delta="20"
-			deltaConfigurable="false"
-			emptyResultsMessage="No more items"
-			iteratorURL="<%= portletURL %>"
-		>
-
-			<%
-			List eventResults = ListUtil.subList((logList),
-			searchContainer.getStart(),
-			searchContainer.getEnd());
-			%>
-
-			<liferay-ui:search-container-results>
-
-				<%
-				searchContainer.setResults(eventResults);
-				searchContainer.setTotal(logList.size());
-				%>
-
-			</liferay-ui:search-container-results>
-
-			<liferay-ui:search-container-row
-				className="com.liferay.training.amf.monitor.model.Event"
-				modelVar="event"
-			>
-
-				<%
-				String eventVal =
-						event.getEventDate() + " " +
-						event.getScreenName() + " " +
-						"(" + event.getUserId() + ")" + " " +
-						event.getIpAddress() + " " +
-						event.getEventType();
-				%>
-
-				<liferay-ui:search-container-column-text name="Event" value="<%= eventVal %>" />
-			</liferay-ui:search-container-row>
-
-			<liferay-ui:search-iterator />
-		</liferay-ui:search-container>
+		<%@ include file="/_monitor-search-container.jsp"%>
 	</liferay-ui:section>
 </liferay-ui:tabs>

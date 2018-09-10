@@ -11,24 +11,26 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.training.amf.registration.constants.RegistrationPortletKeys;
 import com.liferay.training.amf.registration.service.AmfUserLocalService;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
  */
 @Component(
-		immediate = true,
-		property = {
-				"javax.portlet.name="+ RegistrationPortletKeys.REGISTRATION,
-				"mvc.command.name=/processForm"
-		},
-		service = MVCActionCommand.class
+	immediate = true,
+	property = {
+		"javax.portlet.name="+ RegistrationPortletKeys.REGISTRATION,
+		"mvc.command.name=/processForm"
+	},
+	service = MVCActionCommand.class
 )
 public class processFormMVCActionCommand extends BaseMVCActionCommand {
 
@@ -43,8 +45,9 @@ public class processFormMVCActionCommand extends BaseMVCActionCommand {
 		long creatorUserId = 0;
 		try {
 			creatorUserId = _userLocalService.getDefaultUserId(companyId);
-		} catch (PortalException e) {
-			_log.fatal(e);
+		}
+		catch (PortalException pe) {
+			_log.fatal(pe);
 		}
 
 		// Basic Info
@@ -81,8 +84,9 @@ public class processFormMVCActionCommand extends BaseMVCActionCommand {
 		long countryId = 0;
 		try {
 			countryId = _countryService.getCountryByA2("US").getCountryId();
-		} catch (PortalException e) {
-			_log.error(e);
+		}
+		catch (PortalException pe) {
+			_log.error(pe);
 		}
 
 		String zip = ParamUtil.getString(request, "zip");
@@ -91,25 +95,23 @@ public class processFormMVCActionCommand extends BaseMVCActionCommand {
 		String secA = ParamUtil.getString(request, "security_answer");
 		boolean tou = ParamUtil.getBoolean(request, "accepted_tou");
 
-
-        _amfUserLocalService.addAmfUser(request, response, errors,
-                companyId, creatorUserId, firstName, lastName, emailAddress,
-                userName, b_month, b_day, b_year, male, password1,
-                password2, homePhone, mobilePhone, street1, street2, city,
-                regionId, countryId, zip, secQ, secA, tou);
-
-
+		_amfUserLocalService.addAmfUser(
+			request, response, errors, companyId, creatorUserId, firstName,
+			lastName, emailAddress, userName, b_month, b_day, b_year, male,
+			password1, password2, homePhone, mobilePhone, street1, street2,
+			city, regionId, countryId, zip, secQ, secA, tou);
 	}
-
-	@Reference
-	AmfUserLocalService _amfUserLocalService;
-	@Reference
-	UserLocalService _userLocalService;
-	@Reference
-	CountryService _countryService;
-
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		processFormMVCActionCommand.class);
+
+	@Reference
+	private AmfUserLocalService _amfUserLocalService;
+
+	@Reference
+	private CountryService _countryService;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

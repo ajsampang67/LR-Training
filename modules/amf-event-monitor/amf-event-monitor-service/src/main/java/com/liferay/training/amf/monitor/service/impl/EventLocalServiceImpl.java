@@ -21,8 +21,9 @@ import com.liferay.training.amf.monitor.model.Event;
 import com.liferay.training.amf.monitor.service.base.EventLocalServiceBaseImpl;
 import com.liferay.training.amf.monitor.util.ActionKeys;
 
-import javax.swing.Action;
 import java.text.SimpleDateFormat;
+
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -51,14 +52,18 @@ public class EventLocalServiceImpl extends EventLocalServiceBaseImpl {
 		long companyId, long groupId, User user, String ipAddress,
 		String eventType) {
 
-		Date eventDate = CalendarFactoryUtil.getCalendar().getTime();
+		Calendar eventCalendar = CalendarFactoryUtil.getCalendar();
+
+		Date eventDate = eventCalendar.getTime();
+
 		String new_format = "yyyy-MM-dd kk:mm:ss";
+
 		SimpleDateFormat sdf = new SimpleDateFormat(new_format);
 
 		String formattedEventDate = sdf.format(eventDate);
 
-		long eventId =
-				counterLocalService.increment(Event.class.getName());
+		long eventId = counterLocalService.increment(Event.class.getName());
+
 		Event newEvent = eventLocalService.createEvent(eventId);
 
 		newEvent.setCompanyId(companyId);
@@ -71,19 +76,21 @@ public class EventLocalServiceImpl extends EventLocalServiceBaseImpl {
 		newEvent.setEventType(eventType);
 
 		String[] guestPermissions = {};
+
 		try {
 			resourceLocalService.addResources(
-					companyId, groupId, user.getUserId(), Event.class.getName(),
-					eventId, true, false, false);
+				companyId, groupId, user.getUserId(), Event.class.getName(),
+				eventId, true, false, false);
 
 			resourceLocalService.addModelResources(
-					companyId, groupId, user.getUserId(), Event.class.getName(),
-					eventId, new String[] {ActionKeys.VIEW}, guestPermissions);
-
-		} catch (PortalException e) {
-			e.printStackTrace();
+				companyId, groupId, user.getUserId(), Event.class.getName(),
+				eventId, new String[] {ActionKeys.VIEW}, guestPermissions);
+		}
+		catch (PortalException pe) {
+			pe.printStackTrace();
 		}
 
 		eventLocalService.addEvent(newEvent);
 	}
+
 }

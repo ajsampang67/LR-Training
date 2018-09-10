@@ -1,5 +1,9 @@
 package com.liferay.amf.newsletter.portlet;
 
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.addToHashMapList;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getArticleFieldValue;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getMonthDisplayName;
+
 import com.liferay.amf.newsletter.constants.NewsletterPortletKeys;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
@@ -8,8 +12,17 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+
+import java.io.IOException;
+
+import java.time.Month;
+import java.time.format.TextStyle;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.GenericPortlet;
 import javax.portlet.Portlet;
@@ -17,18 +30,9 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-import java.io.IOException;
-import java.time.Month;
-import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.addToHashMapList;
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getArticleFieldValue;
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getMonthDisplayName;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Alfred Sampang
@@ -178,8 +182,10 @@ public class NewsletterPortlet extends GenericPortlet {
 		String[] trueMonths = new String[12];
 
 		for (int i = 11; i > 0; i--) {
-			trueMonths[11 - i] = Month.of(
-				i).getDisplayName(TextStyle.FULL, Locale.US);
+			Month curMonth = Month.of(i);
+
+			trueMonths[11 - i] = curMonth.getDisplayName(
+				TextStyle.FULL, Locale.US);
 		}
 
 		renderRequest.setAttribute("articlesByIssue", articlesByIssue);
@@ -191,10 +197,10 @@ public class NewsletterPortlet extends GenericPortlet {
 		super.render(renderRequest, renderResponse);
 	}
 
-	@Reference
-	private JournalArticleLocalService _journalArticleLocalService;
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		NewsletterPortlet.class);
+
+	@Reference
+	private JournalArticleLocalService _journalArticleLocalService;
 
 }

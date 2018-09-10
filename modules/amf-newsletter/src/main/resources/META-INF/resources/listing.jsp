@@ -54,11 +54,11 @@
 					for (JournalArticle issue : issuesByYearAndMonth.get(issuesKey)) {
 						%>
 
-                        <liferay-portlet:renderURL
-                            plid="<%= issueLayoutPlid %>"
-                            portletName="<%= assetPublisherPortletName %>"
-                            var="issueURL"
-                        >
+<liferay-portlet:renderURL
+	plid="<%= issueLayoutPlid %>"
+	portletName="<%= assetPublisherPortletName %>"
+	var="issueURL"
+>
 							<liferay-portlet:param
 								name="articleId"
 								value="<%= issue.getArticleId() %>"

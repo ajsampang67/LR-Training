@@ -5,7 +5,6 @@ import com.liferay.training.amf.registration.search.constants.AmfRegistrationSea
 
 import java.io.IOException;
 
-
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.GenericPortlet;
@@ -14,6 +13,7 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
 import javax.xml.namespace.QName;
 
 import org.osgi.service.component.annotations.Component;
@@ -27,9 +27,10 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.display-category=AMF",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=Enter US zip",
-		"javax.portlet.name=" + AmfRegistrationSearchBoxPortletKeys.AmfRegistrationSearchBox,
+		"javax.portlet.name=" + AmfRegistrationSearchBoxPortletKeys.AMF_REGISTRATION_SEARCH_BOX,
 		"javax.portlet.security-role-ref=power-user,user",
-		"javax.portlet.supported-publishing-event=ipc.search;localhost"
+		"javax.portlet.supported-publishing-event=ipc.search;localhost",
+		"javax.portlet.resource-bundle=content.Language"
 
 	},
 	service = Portlet.class
@@ -41,13 +42,15 @@ public class AmfRegistrationSearchBoxPortlet extends GenericPortlet {
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 		PortletRequestDispatcher requestDispatcher =
-			getPortletContext().getRequestDispatcher("/META-INF/resources/view.jsp");
+			getPortletContext().getRequestDispatcher(
+				"/META-INF/resources/view.jsp");
 
 		requestDispatcher.include(renderRequest, renderResponse);
 	}
 
 	@Override
-	public void processAction(ActionRequest request, ActionResponse response) throws IOException,
+	public void processAction(
+		ActionRequest request, ActionResponse response) throws IOException,
 			PortletException {
 		String zip = ParamUtil.getString(request, "zip");
 		QName qName = new QName("localhost", "ipc.search");

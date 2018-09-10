@@ -1,4 +1,4 @@
-<%@ include file="init.jsp" %>
+<%@ include file="/init.jsp" %>
 
 <%
 	String zip = ParamUtil.getString(request, "zip");
@@ -10,10 +10,14 @@
 	portletURL.setParameter("zip", zip);
 %>
 
+	<liferay-ui:error
+		key="pleaseEnterAValid5DigitZipCode"
+		message="please-enter-a-valid-5-digit-zip-code"
+	/>
+
 	<liferay-ui:search-container
 		delta="5"
-		emptyResultsMessage="No results found.
-							Please try a different search criteria."
+		emptyResultsMessage="no-results-found-please-try-a-different-search-criteria"
 		iteratorURL="<%= portletURL %>"
 	>
 
@@ -26,12 +30,15 @@
 
 		// Parse to get addresses with matching zip code, then grab user
 
-		for (Object o : allAddresses) {
-			Address a = (Address)o;
+		for (Object object : allAddresses) {
+			Address address = (Address)object;
 
-			if (a.isPrimary() && a.getZip().equals(zip)) {
-				User u = UserLocalServiceUtil.getUser(a.getUserId());
-				userHits.add(u);
+			String currentZip = address.getZip();
+
+			if (address.isPrimary() && currentZip.equals(zip)) {
+				User addressUser =
+						UserLocalServiceUtil.getUser(address.getUserId());
+				userHits.add(addressUser);
 			}
 		}
 
