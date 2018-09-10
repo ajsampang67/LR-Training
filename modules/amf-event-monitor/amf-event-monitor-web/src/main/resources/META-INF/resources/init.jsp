@@ -10,6 +10,7 @@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.portal.kernel.util.ListUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.training.amf.monitor.constants.AmfEventMonitorPortletKeys" %><%@
 page import="com.liferay.training.amf.monitor.model.Event" %><%@
 page import="com.liferay.training.amf.monitor.service.EventLocalServiceUtil" %>
 

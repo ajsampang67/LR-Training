@@ -42,9 +42,8 @@
 			}
 		}
 
-		List userResults = ListUtil.subList(userHits,
-												searchContainer.getStart(),
-												searchContainer.getEnd());
+		List userResults = ListUtil.subList(
+		        userHits, searchContainer.getStart(), searchContainer.getEnd());
 %>
 
 	<liferay-ui:search-container-results />

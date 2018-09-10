@@ -1,5 +1,3 @@
-<%@ page import="java.time.LocalDate" %>
-<%@ page import="java.util.Locale" %>
 <%@ include file="/init.jsp" %>
 
 <!-- TODO: Switch to SessionErrors for errors -->

@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.training.amf.monitor.constants.AmfEventMonitorPortletKeys;
 import com.liferay.training.amf.monitor.service.EventLocalService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +21,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Alfred Sampang
  */
 @Component(
-	immediate = true,
-    property = {"key=login.events.post"},
+	immediate = true, property = {"key=login.events.post"},
 	service = LifecycleAction.class
 )
 public class AmfLoginMonitor implements LifecycleAction {
@@ -49,7 +49,7 @@ public class AmfLoginMonitor implements LifecycleAction {
 			}
 
 			String ipAddress = user.getLoginIP();
-			String eventType = "Login";
+			String eventType = AmfEventMonitorPortletKeys.LOGIN;
 
 			_eventLocalService.addEvent(
 				companyId, groupId, user, ipAddress, eventType);

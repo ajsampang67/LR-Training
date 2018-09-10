@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.training.amf.monitor.constants.AmfEventMonitorPortletKeys;
 import com.liferay.training.amf.monitor.service.EventLocalService;
 
 import org.osgi.service.component.annotations.Component;
@@ -35,8 +36,8 @@ public class AmfListener extends BaseModelListener<User> {
 			pe.printStackTrace();
 		}
 
-		String ipAddress = "0.0.0.0";
-		String eventType = "Registration";
+		String ipAddress = AmfEventMonitorPortletKeys.REGISTRATION_IP;
+		String eventType = AmfEventMonitorPortletKeys.REGISTRATION;
 
 		_eventLocalService.addEvent(
 			companyId, groupId, user, ipAddress, eventType);
