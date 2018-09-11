@@ -3,14 +3,16 @@ package com.liferay.training.amf.registration.commands;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
-import com.liferay.portal.kernel.service.CountryService;
-import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.CountryServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.training.amf.registration.constants.RegistrationPortletKeys;
-import com.liferay.training.amf.registration.service.AmfUserLocalService;
+import com.liferay.training.amf.registration.service.AmfUserLocalServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +21,17 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
  */
 @Component(
-	immediate = true,
-	property = {
-		"javax.portlet.name="+ RegistrationPortletKeys.REGISTRATION,
-		"mvc.command.name=/processForm"
-	},
-	service = MVCActionCommand.class
+		immediate = true,
+		property = {
+				"javax.portlet.name="+ RegistrationPortletKeys.REGISTRATION,
+				"mvc.command.name=/processForm"
+		},
+		service = MVCActionCommand.class
 )
 public class processFormMVCActionCommand extends BaseMVCActionCommand {
 
@@ -44,10 +45,9 @@ public class processFormMVCActionCommand extends BaseMVCActionCommand {
 		long companyId = PortalUtil.getDefaultCompanyId();
 		long creatorUserId = 0;
 		try {
-			creatorUserId = _userLocalService.getDefaultUserId(companyId);
-		}
-		catch (PortalException pe) {
-			_log.fatal(pe);
+			creatorUserId = UserLocalServiceUtil.getDefaultUserId(companyId);
+		} catch (PortalException e) {
+			_log.fatal(e);
 		}
 
 		// Basic Info
@@ -83,10 +83,9 @@ public class processFormMVCActionCommand extends BaseMVCActionCommand {
 		long regionId = ParamUtil.getLong(request, "state");
 		long countryId = 0;
 		try {
-			countryId = _countryService.getCountryByA2("US").getCountryId();
-		}
-		catch (PortalException pe) {
-			_log.error(pe);
+			countryId = CountryServiceUtil.getCountryByA2("US").getCountryId();
+		} catch (PortalException e) {
+			_log.error(e);
 		}
 
 		String zip = ParamUtil.getString(request, "zip");
@@ -95,23 +94,17 @@ public class processFormMVCActionCommand extends BaseMVCActionCommand {
 		String secA = ParamUtil.getString(request, "security_answer");
 		boolean tou = ParamUtil.getBoolean(request, "accepted_tou");
 
-		_amfUserLocalService.addAmfUser(
-			request, response, errors, companyId, creatorUserId, firstName,
-			lastName, emailAddress, userName, b_month, b_day, b_year, male,
-			password1, password2, homePhone, mobilePhone, street1, street2,
-			city, regionId, countryId, zip, secQ, secA, tou);
+
+        AmfUserLocalServiceUtil.addAmfUser(request, response, errors,
+                companyId, creatorUserId, firstName, lastName, emailAddress,
+                userName, b_month, b_day, b_year, male, password1,
+                password2, homePhone, mobilePhone, street1, street2, city,
+                regionId, countryId, zip, secQ, secA, tou);
+
+
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		processFormMVCActionCommand.class);
-
-	@Reference
-	private AmfUserLocalService _amfUserLocalService;
-
-	@Reference
-	private CountryService _countryService;
-
-	@Reference
-	private UserLocalService _userLocalService;
 
 }
