@@ -6,7 +6,7 @@
 <c:choose>
     <c:when test="${!themeDisplay.isSignedIn()}">
         <div>
-            <liferay-ui:success key="registration-successful" message="registration-successful"/>
+            <liferay-ui:success key="registrationSuccessful" message="registration-successful"/>
             <form action="<portlet:actionURL name="/processForm" />"
                   method="post">
                 <aui:fieldset-group markupView="lexicon">
@@ -35,7 +35,7 @@
                                       message="email-max-length-255-characters"/>
                    <liferay-ui:error key="please-enter-a-valid-email-address"
                                      message="please-enter-a-valid-email-address"/>
-                    <liferay-ui:error key="email-is-in-use"
+                    <liferay-ui:error key="emailIsInUse"
                                       message="email-is-in-use"/>
                     <aui:input label="username" name="username"
                                type="text"
@@ -46,7 +46,7 @@
                                       message="username-must-be-between-4-and-16-characters"/>
                     <liferay-ui:error key="username-must-be-alphanumeric"
                                       message="username-must-be-alphanumeric"/>
-                    <liferay-ui:error key="username-is-in-use"
+                    <liferay-ui:error key="usernameIsInUse"
                                       message="username-is-in-use"/>
 
                     <aui:select class="select" label="gender"
