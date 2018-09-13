@@ -62,7 +62,7 @@ public class NewsletterPortlet extends GenericPortlet {
 
 	@Override
 	public void render(
-			RenderRequest renderRequest, RenderResponse renderResponse)
+		RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
