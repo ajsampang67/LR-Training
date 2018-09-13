@@ -1,9 +1,5 @@
 package com.liferay.amf.newsletter.portlet;
 
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.addToHashMapList;
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getArticleFieldValue;
-import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getMonthDisplayName;
-
 import com.liferay.amf.newsletter.constants.NewsletterPortletKeys;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
@@ -12,17 +8,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.WebKeys;
-
-import java.io.IOException;
-
-import java.time.Month;
-import java.time.format.TextStyle;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import javax.portlet.GenericPortlet;
 import javax.portlet.Portlet;
@@ -30,9 +17,18 @@ import javax.portlet.PortletException;
 import javax.portlet.PortletRequestDispatcher;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import java.io.IOException;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.addToHashMapList;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getArticleFieldValue;
+import static com.liferay.amf.newsletter.portlet.AmfNewsletterHelpers.getMonthDisplayName;
 
 /**
  * @author Alfred Sampang
@@ -68,7 +64,6 @@ public class NewsletterPortlet extends GenericPortlet {
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		long companyId = themeDisplay.getCompanyId();
 		long groupId = themeDisplay.getSiteGroupId();
 
 		List yearsList = new ArrayList();
@@ -79,7 +74,7 @@ public class NewsletterPortlet extends GenericPortlet {
 		HashMap<String, List> issuesByYearAndMonth = new HashMap<>();
 		HashMap<JournalArticle, List> articlesByIssue = new HashMap<>();
 
-		// Get journal articles that are published only
+		// Only get journal articles that are published
 
 		List allJournalArticles = _journalArticleLocalService.getArticles(
 			groupId, 0, 0, 0,
@@ -87,8 +82,8 @@ public class NewsletterPortlet extends GenericPortlet {
 		List journalArticles = new ArrayList();
 
 		//TODO Dynamically get Ids
-		final String issue_DDM_KEY = "33255";
-		final String article_DDM_KEY = "33251";
+		final String ISSUE_DDM_KEY = "33255";
+		final String ARTICLE_DDM_KEY = "33251";
 
 		// Filter for most recent versions
 
@@ -112,16 +107,18 @@ public class NewsletterPortlet extends GenericPortlet {
 		ArrayList articles = new ArrayList();
 		ArrayList issues = new ArrayList();
 
+		// Stepping through the articles to organize issue VS article
+
 		for (Object object : journalArticles) {
 			JournalArticle journalArticle = (JournalArticle)object;
 
 			switch (journalArticle.getDDMStructureKey()) {
 
-				case issue_DDM_KEY:
+				case ISSUE_DDM_KEY:
 					issues.add(journalArticle);
 
 					break;
-				case article_DDM_KEY:
+				case ARTICLE_DDM_KEY:
 					articles.add(journalArticle);
 
 					break;
@@ -130,7 +127,9 @@ public class NewsletterPortlet extends GenericPortlet {
 
 					break;
 			}
-		} // End forEach asset
+		}
+
+		// Getting dates then populating issuesByYearAndMonth for the UI
 
 		for (Object issueObject : issues) {
 			JournalArticle issue = (JournalArticle)issueObject;
@@ -148,7 +147,6 @@ public class NewsletterPortlet extends GenericPortlet {
 				}
 			}
 
-			// Getting dates for the UI, then populating issuesByYearAndMonth
 
 			String issueDateStr = getArticleFieldValue(issue, "IssueDate");
 
@@ -161,12 +159,7 @@ public class NewsletterPortlet extends GenericPortlet {
 
 			String yearToMonth = issueYear + issueMonth;
 
-			// Add the month to the <Year, [Month]> hashmap
-
 			addToHashMapList(monthsByYear, issueYear, issueMonth);
-
-			// Add the issues to the <(String YearMonth), [issues]> hashmap
-
 			addToHashMapList(issuesByYearAndMonth, yearToMonth, issue);
 		}
 

@@ -1,6 +1,5 @@
 <%@ include file="/init.jsp" %>
 
-<!-- TODO: Switch to SessionErrors for errors -->
 <!-- Checks if user is logged in -->
 
 <c:choose>
