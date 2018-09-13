@@ -7,6 +7,9 @@
 		refresh="false"
 		type="tabs nav-tabs-default"
 >
+
+
+	<%-- hmm --%>
 	<c:forEach items="${years}" var="year">
 		<liferay-ui:section>
 			<c:set value="${monthsByYear.get(year)}" var="months" />
