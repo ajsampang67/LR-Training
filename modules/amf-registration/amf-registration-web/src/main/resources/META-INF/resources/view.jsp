@@ -1,6 +1,3 @@
-<%@ page import="java.time.LocalDate" %>
-<%@ page import="java.util.Locale" %>
-<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ include file="/init.jsp" %>
 
 <!-- TODO: Switch to SessionErrors for errors -->

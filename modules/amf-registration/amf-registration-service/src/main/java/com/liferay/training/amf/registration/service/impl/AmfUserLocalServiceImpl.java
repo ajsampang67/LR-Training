@@ -14,6 +14,8 @@
 
 package com.liferay.training.amf.registration.service.impl;
 
+import static com.liferay.training.amf.registration.service.validator.RegistrationValidator.isValidPhone;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.Group;
@@ -26,19 +28,17 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.training.amf.registration.service.base.AmfUserLocalServiceBaseImpl;
 import com.liferay.training.amf.registration.service.validator.RegistrationValidator;
 
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
 import java.util.List;
 import java.util.Locale;
 
-import static com.liferay.training.amf.registration.service.validator.RegistrationValidator.isValidPhone;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 
 /**
  * The implementation of the amf user local service.
@@ -57,102 +57,103 @@ import static com.liferay.training.amf.registration.service.validator.Registrati
  */
 public class AmfUserLocalServiceImpl extends AmfUserLocalServiceBaseImpl {
 
-    /**
-     * NOTE FOR DEVELOPERS:
-     *
-     * Never reference this class directly. Always use {@link
-     * com.liferay.training.amf.registration.service.AmfUserLocalServiceUtil} to
-     * access the amf user local service.
-     */
-    public void addAmfUser(
-        ActionRequest request, ActionResponse response, List<String> errors,
-        long companyId, long creatorUserId, String firstName, String lastName,
-        String emailAddress, String userName, int b_month, int b_day,
-        int b_year, int male, String password1, String password2,
-        String homePhone, String mobilePhone, String street1, String street2,
-        String city, long regionId, long countryId, String zip, String secQ,
-        String secA, boolean tou) throws PortalException {
+	/**
+	 * NOTE FOR DEVELOPERS:
+	 *
+	 * Never reference this class directly. Always use {@link
+	 * com.liferay.training.amf.registration.service.AmfUserLocalServiceUtil} to
+	 * access the amf user local service.
+	 */
+	public void addAmfUser(
+		ActionRequest request, ActionResponse response, List<String> errors,
+		long companyId, long creatorUserId, String firstName, String lastName,
+		String emailAddress, String userName, int b_month, int b_day,
+		int b_year, int male, String password1, String password2,
+		String homePhone, String mobilePhone, String street1, String street2,
+		String city, long regionId, long countryId, String zip, String secQ,
+		String secA, boolean tou) throws PortalException {
 
-        // Validating all form data
+		// Validating all form data
 
-        RegistrationValidator.isValidForm(
-            errors, firstName, lastName, emailAddress, userName, b_month,
-            b_day, b_year, password1, password2, street1, street2, city,
-            regionId, zip, secQ, secA, tou);
+		RegistrationValidator.isValidForm(
+			errors, firstName, lastName, emailAddress, userName, b_month, b_day,
+			b_year, password1, password2, street1, street2, city, regionId, zip,
+			secQ, secA, tou);
 
-        // Phone validation
+		// Phone validation
 
-        if (Validator.isNotNull(homePhone)) {
-            isValidPhone(homePhone, errors);
-        }
+		if (Validator.isNotNull(homePhone)) {
+			isValidPhone(homePhone, errors);
+		}
 
-        if (Validator.isNotNull(mobilePhone)) {
-            isValidPhone(mobilePhone, errors);
-        }
+		if (Validator.isNotNull(mobilePhone)) {
+			isValidPhone(mobilePhone, errors);
+		}
 
-        for (String error : errors) {
-            SessionErrors.add(request, error);
-        }
+		for (String error : errors) {
+			SessionErrors.add(request, error);
+		}
 
-        if (SessionErrors.isEmpty(request)) {
-            User newUser;
-            Group guest = null;
-            try {
-                guest = GroupLocalServiceUtil.getGroup(
-                    companyId, GroupConstants.GUEST);
-            } catch (PortalException e) {
-                e.printStackTrace();
-            }
-            long[] organizationIds = {};
-            long[] groupIds = {guest.getGroupId()};
-            long[] roleIds = {};
-            long[] userGroupIds = {};
+		if (SessionErrors.isEmpty(request)) {
+			User newUser;
+			Group guest = null;
+			try {
+				guest = GroupLocalServiceUtil.getGroup(
+					companyId, GroupConstants.GUEST);
+			}
+			catch (PortalException pe) {
+				pe.printStackTrace();
+			}
 
-            newUser = UserLocalServiceUtil.addUser(
-                creatorUserId, companyId, false, password1, password2,
-                false, userName, emailAddress, 0, StringPool.BLANK,
-                Locale.US, firstName, StringPool.BLANK, lastName, 0, 0,
-                male == 1, b_month, b_day, b_year, StringPool.BLANK,
-                groupIds, organizationIds, roleIds, userGroupIds, true,
-                null);
+			long[] organizationIds = {};
+			long[] groupIds = {guest.getGroupId()};
+			long[] roleIds = {};
+			long[] userGroupIds = {};
 
-            newUser.setPasswordReset(false);
-            newUser.setReminderQueryQuestion(secQ);
-            newUser.setReminderQueryAnswer(secA);
-            newUser.setAgreedToTermsOfUse(tou);
+			newUser = UserLocalServiceUtil.addUser(
+				creatorUserId, companyId, false, password1, password2, false,
+				userName, emailAddress, 0, StringPool.BLANK, Locale.US,
+				firstName, StringPool.BLANK, lastName, 0, 0, male == 1, b_month,
+				b_day, b_year, StringPool.BLANK, groupIds, organizationIds,
+				roleIds, userGroupIds, true, null);
 
-            // Adding phones
+			newUser.setPasswordReset(false);
+			newUser.setReminderQueryQuestion(secQ);
+			newUser.setReminderQueryAnswer(secA);
+			newUser.setAgreedToTermsOfUse(tou);
 
-            ServiceContext serviceContext =
-                ServiceContextFactory.getInstance(request);
+			// Adding phones
 
-            if (Validator.isNotNull(homePhone)) {
-                PhoneLocalServiceUtil.addPhone(
-                    newUser.getUserId(), Contact.class.getName(),
-                    newUser.getContactId(), homePhone, StringPool.BLANK,
-                    11008, true, serviceContext);
-            }
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(
+				request);
 
-            if (Validator.isNotNull(mobilePhone)) {
-                PhoneLocalServiceUtil.addPhone(
-                    newUser.getUserId(), Contact.class.getName(),
-                    newUser.getContactId(), mobilePhone,
-                    StringPool.BLANK, 11011, true, serviceContext);
+			if (Validator.isNotNull(homePhone)) {
+				PhoneLocalServiceUtil.addPhone(
+					newUser.getUserId(), Contact.class.getName(),
+					newUser.getContactId(), homePhone, StringPool.BLANK, 11008,
+					true, serviceContext);
+			}
 
-            }
+			if (Validator.isNotNull(mobilePhone)) {
+				PhoneLocalServiceUtil.addPhone(
+					newUser.getUserId(), Contact.class.getName(),
+					newUser.getContactId(), mobilePhone, StringPool.BLANK,
+					11011, true, serviceContext);
+			}
 
-            long typeId = 11000;
+			long typeId = 11000;
 
-            AddressLocalServiceUtil.addAddress(
-                newUser.getUserId(), Contact.class.getName(),
-                newUser.getContactId(), street1, street2,
-                StringPool.BLANK, city, zip, regionId, countryId,
-                typeId, true, true, serviceContext);
+			AddressLocalServiceUtil.addAddress(
+				newUser.getUserId(), Contact.class.getName(),
+				newUser.getContactId(), street1, street2, StringPool.BLANK,
+				city, zip, regionId, countryId, typeId, true, true,
+				serviceContext);
 
-            UserLocalServiceUtil.updateUser(newUser);
+			UserLocalServiceUtil.updateUser(newUser);
+		}
+		else {
+			PortalUtil.copyRequestParameters(request, response);
+		}
+	}
 
-        } else {
-            PortalUtil.copyRequestParameters(request, response);
-        }
-    }
 }
