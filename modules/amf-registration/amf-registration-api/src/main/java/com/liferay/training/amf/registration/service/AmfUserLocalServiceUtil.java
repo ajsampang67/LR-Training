@@ -18,6 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.osgi.util.ServiceTrackerFactory;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -60,9 +61,8 @@ public class AmfUserLocalServiceUtil {
 		java.lang.String street1, java.lang.String street2,
 		java.lang.String city, long regionId, long countryId,
 		java.lang.String zip, java.lang.String secQ, java.lang.String secA,
-		boolean tou) {
-		getService()
-			.addAmfUser(request, response, errors, companyId, creatorUserId,
+		boolean tou) throws PortalException {
+		getService().addAmfUser(request, response, errors, companyId, creatorUserId,
 			firstName, lastName, emailAddress, userName, b_month, b_day,
 			b_year, male, password1, password2, homePhone, mobilePhone,
 			street1, street2, city, regionId, countryId, zip, secQ, secA, tou);

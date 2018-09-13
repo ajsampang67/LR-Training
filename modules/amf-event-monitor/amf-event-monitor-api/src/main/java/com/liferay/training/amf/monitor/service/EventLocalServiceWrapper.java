@@ -47,7 +47,8 @@ public class EventLocalServiceWrapper implements EventLocalService,
 	/**
 	* NOTE FOR DEVELOPERS:
 	*
-	* Never reference this class directly. Always use {@link EventLocalServiceUtil} to access the event local service.
+	* Never reference this class directly. Always use
+	* {@link EventLocalServiceUtil} to access the event local service.
 	*/
 	@Override
 	public void addEvent(long companyId, long groupId,

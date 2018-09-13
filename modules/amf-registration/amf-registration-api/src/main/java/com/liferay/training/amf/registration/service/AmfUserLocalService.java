@@ -65,7 +65,7 @@ public interface AmfUserLocalService extends BaseLocalService {
 		java.lang.String mobilePhone, java.lang.String street1,
 		java.lang.String street2, java.lang.String city, long regionId,
 		long countryId, java.lang.String zip, java.lang.String secQ,
-		java.lang.String secA, boolean tou);
+		java.lang.String secA, boolean tou) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.

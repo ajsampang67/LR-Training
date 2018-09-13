@@ -16,6 +16,7 @@ package com.liferay.training.amf.registration.service;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceWrapper;
 
 /**
@@ -50,13 +51,13 @@ public class AmfUserLocalServiceWrapper implements AmfUserLocalService,
 		java.lang.String homePhone, java.lang.String mobilePhone,
 		java.lang.String street1, java.lang.String street2,
 		java.lang.String city, long regionId, long countryId,
-		java.lang.String zip, java.lang.String secQ, java.lang.String secA,
-		boolean tou) {
+		java.lang.String zip, java.lang.String securityQuestion, java.lang.String securityAnswer,
+		boolean tou) throws PortalException {
 		_amfUserLocalService.addAmfUser(request, response, errors, companyId,
 			creatorUserId, firstName, lastName, emailAddress, userName,
 			b_month, b_day, b_year, male, password1, password2, homePhone,
 			mobilePhone, street1, street2, city, regionId, countryId, zip,
-			secQ, secA, tou);
+			securityQuestion, securityAnswer, tou);
 	}
 
 	/**

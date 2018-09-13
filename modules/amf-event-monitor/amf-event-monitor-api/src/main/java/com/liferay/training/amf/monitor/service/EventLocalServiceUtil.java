@@ -56,7 +56,8 @@ public class EventLocalServiceUtil {
 	/**
 	* NOTE FOR DEVELOPERS:
 	*
-	* Never reference this class directly. Always use {@link EventLocalServiceUtil} to access the event local service.
+	* Never reference this class directly. Always use
+	* {@link EventLocalServiceUtil} to access the event local service.
 	*/
 	public static void addEvent(long companyId, long groupId,
 		com.liferay.portal.kernel.model.User user, java.lang.String ipAddress,

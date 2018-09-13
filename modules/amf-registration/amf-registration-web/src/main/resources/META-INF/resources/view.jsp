@@ -1,5 +1,6 @@
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="java.util.Locale" %>
+<%@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %>
 <%@ include file="/init.jsp" %>
 
 <!-- TODO: Switch to SessionErrors for errors -->
@@ -37,6 +38,8 @@
                                       message="email-max-length-255-characters"/>
                    <liferay-ui:error key="please-enter-a-valid-email-address"
                                      message="please-enter-a-valid-email-address"/>
+                    <liferay-ui:error key="email-is-in-use"
+                                      message="email-is-in-use"/>
                     <aui:input label="username" name="username"
                                type="text"
                                required="true"/>
@@ -46,6 +49,8 @@
                                       message="username-must-be-between-4-and-16-characters"/>
                     <liferay-ui:error key="username-must-be-alphanumeric"
                                       message="username-must-be-alphanumeric"/>
+                    <liferay-ui:error key="username-is-in-use"
+                                      message="username-is-in-use"/>
 
                     <aui:select class="select" label="gender"
                                 name="male"

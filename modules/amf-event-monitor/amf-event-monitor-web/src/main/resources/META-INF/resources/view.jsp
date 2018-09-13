@@ -51,16 +51,16 @@ String tabs1 = ParamUtil.getString(request, "tabs1", AmfEventMonitorPortletKeys.
 
 	<!-- All section, show everything up to 20 items per page -->
 	<liferay-ui:section>
-		<%@ include file="WEB-INF/sections/_section-all.jsp" %>
+		<%@ include file="/WEB-INF/sections/_section-all.jsp" %>
 	</liferay-ui:section>
 
 	<!-- Registration section, show only registration events -->
 	<liferay-ui:section>
-		<%@ include file="WEB-INF/sections/_section-registration.jsp" %>
+		<%@ include file="/WEB-INF/sections/_section-registration.jsp" %>
 	</liferay-ui:section>
 
 	<!-- Login section, show only login events -->
 	<liferay-ui:section>
-		<%@ include file="WEB-INF/sections/_section-login.jsp" %>
+		<%@ include file="/WEB-INF/sections/_section-login.jsp" %>
 	</liferay-ui:section>
 </liferay-ui:tabs>

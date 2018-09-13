@@ -1,3 +1,7 @@
+<%-- curParam ensures search containers are independent.
+		Ex. Without cur param, switching _section-login to page 2 will
+		also switch _section-all to page 2
+		--%>
 <liferay-ui:search-container
 	curParam="<%= tabParam %>"
 	delta="20"

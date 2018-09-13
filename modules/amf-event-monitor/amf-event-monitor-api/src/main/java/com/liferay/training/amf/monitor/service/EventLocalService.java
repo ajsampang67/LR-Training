@@ -74,7 +74,8 @@ public interface EventLocalService extends BaseLocalService,
 	/**
 	* NOTE FOR DEVELOPERS:
 	*
-	* Never reference this class directly. Always use {@link EventLocalServiceUtil} to access the event local service.
+	* Never reference this class directly. Always use
+	* {@link EventLocalServiceUtil} to access the event local service.
 	*/
 	public void addEvent(long companyId, long groupId, User user,
 		java.lang.String ipAddress, java.lang.String eventType);

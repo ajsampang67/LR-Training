@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.display-category=AMF",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=Enter US zip",
-		"javax.portlet.name=" + AmfRegistrationSearchBoxPortletKeys.AmfRegistrationSearchBox,
+		"javax.portlet.name=" + AmfRegistrationSearchBoxPortletKeys.AMF_REGISTRATION_SEARCH_BOX,
 		"javax.portlet.security-role-ref=power-user,user",
 		"javax.portlet.supported-publishing-event=ipc.search;localhost"
 
