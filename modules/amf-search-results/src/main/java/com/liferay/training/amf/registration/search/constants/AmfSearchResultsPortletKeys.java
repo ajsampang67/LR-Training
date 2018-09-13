@@ -5,6 +5,8 @@ package com.liferay.training.amf.registration.search.constants;
  */
 public class AmfSearchResultsPortletKeys {
 
-	public static final String AmfSearchResults = "AmfSearchResults";
+	public static final String AMF_SEARCH_RESULTS = "AmfSearchResults";
+
+	public static final String SEARCH_RESULTS_FOR = "Search Results for ";
 
 }
