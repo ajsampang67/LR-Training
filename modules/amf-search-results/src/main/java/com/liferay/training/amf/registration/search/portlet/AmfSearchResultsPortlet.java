@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.display-category=AMF",
 		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.display-name=AMF Search Results",
-		"javax.portlet.name=" + AmfSearchResultsPortletKeys.AmfSearchResults,
+		"javax.portlet.name=" + AmfSearchResultsPortletKeys.AMF_SEARCH_RESULTS,
 		"javax.portlet.security-role-ref=power-user,user",
 		"javax.portlet.supported-processing-event=ipc.search;localhost"
 	},
@@ -48,22 +48,21 @@ public class AmfSearchResultsPortlet extends GenericPortlet {
 
 		String error = "";
 
-		boolean isEmpty = Validator.isNull(zip);
-		boolean isNum = Validator.isNumber(zip);
+		boolean empty = Validator.isNull(zip);
+		boolean num = Validator.isNumber(zip);
 
-		boolean isFive = false;
+		boolean five = false;
 
 		if (zip.length() == 5) {
-			isFive = true;
+			five = true;
 		}
 
 		// Check that the zip code is valid
 
-		if (isEmpty || !isNum || !isFive) {
-			error = "please-enter-a-valid-5-digit-zip-code";
+		if (empty || !num || !five) {
+			SessionErrors.add(request, "pleaseEnterAValid5DigitZipCode");
 		}
 
-		response.setRenderParameter("error", error);
 		response.setRenderParameter("zip", zip);
 	}
 
@@ -77,17 +76,18 @@ public class AmfSearchResultsPortlet extends GenericPortlet {
 		throws IOException, PortletException {
 
 		PortletRequestDispatcher requestDispatcher =
-			getPortletContext().getRequestDispatcher("/META-INF/resources/view.jsp");
+			getPortletContext().getRequestDispatcher(
+				"/META-INF/resources/view.jsp");
 
 		String zip = ParamUtil.getString(renderRequest, "zip");
-		String error = ParamUtil.getString(renderRequest, "error");
 
 		// Send error if there is one, otherwise show "Search results for ..."
 
-		if (Validator.isNotNull(error))SessionErrors.add(renderRequest, error);
-		else
+		if (SessionErrors.isEmpty(renderRequest)) {
 			renderResponse.setTitle(
-				"Search Results for ".concat(HtmlUtil.escape(zip)));
+				AmfSearchResultsPortletKeys.SEARCH_RESULTS_FOR.concat(
+					HtmlUtil.escape(zip)));
+		}
 
 		requestDispatcher.include(renderRequest, renderResponse);
 	}
